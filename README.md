@@ -2,7 +2,7 @@
 
 ## 🔗 사이트 바로가기
 
-**👉 [크로스핏 슈퍼밤 2025 연말 파티 이벤트 배정 시스템 접속하기](https://ssssccccchhhhh.github.io/2025-year-end-party/)**
+**👉 [크로스핏 슈퍼밤 2025 연말 파티 팀별 이벤트 와드 배정하기](https://ssssccccchhhhh.github.io/2025-year-end-party/)**
 
 ## 📋 이벤트 안내
 
