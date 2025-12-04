@@ -1,0 +1,2443 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>크로스핏 슈퍼밤 - 2025 YEAR-END PARTY</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    :root {
+      --primary: #8B4513;
+      --primary-dark: #5D2E0C;
+      --primary-light: #A0522D;
+      --bg-cream: #FDF5E6;
+      --bg-card: #FAF0E1;
+      --accent-red: #C41E3A;
+      --accent-gold: #DAA520;
+      --text-dark: #2C1810;
+      --text-muted: #6B5344;
+      --success: #228B22;
+      --warning: #FF8C00;
+      --shadow: 0 4px 20px rgba(139, 69, 19, 0.15);
+    }
+    
+    body {
+      font-family: 'Noto Sans KR', sans-serif;
+      background: var(--bg-cream);
+      background-image: 
+        radial-gradient(circle at 20% 50%, rgba(139, 69, 19, 0.03) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(218, 165, 32, 0.05) 0%, transparent 40%),
+        radial-gradient(circle at 40% 80%, rgba(196, 30, 58, 0.03) 0%, transparent 40%);
+      min-height: 100vh;
+      color: var(--text-dark);
+    }
+    
+    .title-font {
+      font-family: 'Black Han Sans', sans-serif;
+    }
+    
+    /* 단어 줄바꿈 방지 */
+    .no-break {
+      word-break: keep-all;
+      overflow-wrap: break-word;
+    }
+    
+    body {
+      word-break: keep-all;
+      overflow-wrap: break-word;
+    }
+    
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    
+    ::-webkit-scrollbar-track {
+      background: var(--bg-cream);
+    }
+    
+    ::-webkit-scrollbar-thumb {
+      background: var(--primary-light);
+      border-radius: 3px;
+    }
+    
+    /* Animations */
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+    
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-5px); }
+      75% { transform: translateX(5px); }
+    }
+    
+    .animate-in {
+      animation: fadeInUp 0.4s ease-out forwards;
+    }
+    
+    .pulse {
+      animation: pulse 0.3s ease-in-out;
+    }
+    
+    .shake {
+      animation: shake 0.3s ease-in-out;
+    }
+    
+    /* 눈 내림 효과 */
+    @keyframes snowfall {
+      0% {
+        transform: translateY(-10vh) rotate(0deg);
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(110vh) rotate(360deg);
+        opacity: 0.3;
+      }
+    }
+    
+    .snowflake {
+      position: fixed;
+      top: -20px;
+      color: white;
+      text-shadow: 0 0 5px rgba(255,255,255,0.8);
+      pointer-events: none;
+      z-index: 9999;
+      animation: snowfall linear infinite;
+    }
+    
+    .snow-container {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 9999;
+      overflow: hidden;
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+  
+  <script type="text/babel">
+    const { useState, useEffect, useRef, useCallback } = React;
+    
+    // 코치 데이터
+    const COACHES = [
+      { id: 'JAEKYUNG', name: '재경', gender: 'male' },
+      { id: 'BONGSOO', name: '봉수', gender: 'male' },
+      { id: 'SEYOUNG', name: '세영', gender: 'male' },
+      { id: 'YEJEE', name: '예지', gender: 'female' }
+    ];
+    
+    // 와드 룰북
+    const RULEBOOK = {
+      1: `EVENT 1 (총7분)
+AMRAP 3MIN (여자3/남자3) 
+-15 SYNC. BOX JUMP
+-MAX CAL ROW / SKI / BIKE
+
+*3분 운동
+-15싱크로 버피 후 남은시간 머신타기.
+-여자선수 3분 진행 , 1분 브레이크 , 남자선수 3분 진행
+
+*버피
+-3명 전원의 가슴이 바닥에 닿은 상태에서 시작할 수 있습니다.
+-박스에 올라가는 타이밍, 내려오는 타이밍은 서로 달라도 무관합니다.
+-박스 스텝업,스텝다운 가능합니다.
+-박스높이 여자20인치 / 남자 24인치. 
+
+*머신
+-1인당 1개의 정해진 머신을 사용합니다.
+-3명 전원이 버피가 끝나면 남은 시간동안 머신을 탑니다.
+-3명 전원의 칼로리 합을 기록합니다.
+-머신은 다른 팀원들이 전원을 켜놓을 수 있습니다.
+
+*기록
+1) 여자 3명 칼로리 총합으로 높은팀 순으로 4,3,2,1점 
+2) 남자 3명 칼로리 총합으로 높은팀 순으로 4,3,2,1점`,
+
+      2: `EVENT 2
+1)1RM HANG SNATCH IN 4MIN
+2)1RM HANG CLEAN IN 4MIN
+3)MAX THRUSTER IN 3MIN
+
+-A,B,C,D팀의 각 스내치 선수가 나와서 4분동안 1RM을 측정합니다. (여)
+-A,B,C,D팀의 각 스내치 선수가 나와서 4분동안 1RM을 측정합니다. (남)
+-A,B,C,D팀의 각 클린 선수가 나와서 4분동안 1RM을 측정합니다. (여)
+-A,B,C,D팀의 각 클린 선수가 나와서 4분동안 1RM을 측정합니다. (남)
+-A,B,C,D팀의 각 쓰러스터 선수가 나와서 3분동안 최대갯수를 측정합니다. (여)
+-A,B,C,D팀의 각 쓰러스터 선수가 나와서 3분동안 최대갯수를 측정합니다. (남)
+
+*행스내치,행클린은 스쿼트/파워 모두 가능.
+*행스내치/행클린/쓰러스터 모두 매트 위에서 시작합니다.
+*무게 증량은 팀원들이 도와줄 수 있습니다.
+*작은 원판은 5파운드 1쌍 , 2.5파운드 1쌍, 1파운드 1쌍 사용가능합니다.
+
+*기록
+-여자,남자 클린 무게 합으로 높은 팀 순으로 4,3,2,1점
+-여자,남자 스내치 무게 합으로 높은 팀 순으로 4,3,2,1점  
+-여자,남자 쓰러스터 갯수 합으로 높은 팀 순으로 4,3,2,1점`,
+
+      3: `EVENT 3
+AMRAP 3MIN 
+5 ROPE CLIMB +
+1) MAX Ring muscle up (남)
+2) MAX Bar muscle up (남)
+3) MAX Chest to bar pull up (남)
+4) MAX Pull up (여)
+
+*3분 안에 5개의 로프를 타고 남은 시간동안 정해진 동작을 
+최대한 많이 수행하기
+
+*기록
+-각 동작당 높은순으로 4,3,2,1점`,
+
+      4: `EVENT 4
+-6 Rounds
+200m Run + 50M Sled push (왕복2번)
+
+*달리는 도중에는 손잡이를 잡을 수 없습니다.
+*계기판 거리가 0.2를 찍으면 내려올 수 있습니다.
+*슬레드의 끝 부분이 라인에 걸치기만 해도 됩니다.
+*팀원이 다음 주자의 슬레드 무게를 증량해 줄 수 있습니다.
+*다음주자는 앞선 주자의 슬레드 골인 지점에 서있다가
+슬레드가 골인하면 트레드밀로 올라갈 수 있습니다.
+
+*기록
+-6명이 끝난 시간을 기록하고 빠른 순으로 4,3,2,1점`,
+
+      5: `EVENT 5
+-1330파운드 / 605키로 슬레드 풀
+-2분동안 최대한 멀리 끌고갑니다.
+-슬레드에 있는 1칸 표시당 1랩입니다. 
+-2분내에 끝까지 도착하면 
+ 반대편 로프를 잡고 돌아갑니다. 
+
+*기록
+-멀리 간 순서대로 4,3,2,1점`,
+
+      6: `EVENT 6
+1) 1MIN MAX SEATED ROW (여)
+2) 1MIN MAX SEATED ROW (남)
+3) 1MIN MAX CHEST PRESS (여)
+4) 1MIN MAX CHEST PRESS (남)
+5) 1MIN MAX LEG PRESS (여)
+6) 1MIN MAX LEG PRESS (남)
+
+*머신에서 1분 세팅 후 WORK 값 측정
+*매 1분이 끝나면 다시 머신 세팅 후
+다음 선수가 출발.
+
+*기록
+-6명의 총 WORK값을 기록하고
+높은 순으로 4,3,2,1점`
+    };
+    
+    // 팀 데이터
+    const TEAMS_DATA = {
+      'D': {
+        name: 'TEAM D',
+        male: ['김동석', '김성현', '김재명', '서경덕', '송창현', '윤석환', '이우근', '임준섭', '최효근'],
+        female: ['김수정', '김영', '김희연', '박송이', '박수진', '신해솔'],
+        allowedCoaches: ['JAEKYUNG', 'BONGSOO', 'SEYOUNG', 'YEJEE']
+      },
+      'C': {
+        name: 'TEAM C',
+        male: ['김윤철', '박영준', '박장우', '양지백', '윤형훈', '이재왕', '이종휘', '전재원', '한예섭'],
+        female: ['고수현', '배현지', '왕송희', '정주연', '최나은', '하라연'],
+        allowedCoaches: ['JAEKYUNG', 'BONGSOO', 'SEYOUNG', 'YEJEE']
+      },
+      'B': {
+        name: 'TEAM B',
+        male: ['김규남', '노영수', '배홍민', '신현재', '심수영', '양태일', '이석희', '이호영', '하진관'],
+        female: ['김지윤', '김진아', '임하경', '주소나', '좌미주', '허유진'],
+        allowedCoaches: ['JAEKYUNG', 'BONGSOO', 'SEYOUNG', 'YEJEE']
+      },
+      'A': {
+        name: 'TEAM A',
+        male: ['강병관', '김정인', '박병훈', '심재영', '조기열', '최창욱', '최현덕', '한승종'],
+        female: ['김민지', '박현주', '배진영', '송경하', '이선민', '이채진', '조은별'],
+        allowedCoaches: ['JAEKYUNG', 'BONGSOO', 'SEYOUNG'] // 예지 코치 제외
+      }
+    };
+    
+    // 이벤트 데이터 - 여성 인원수에 따라 동적 생성
+    const getEventsData = (femaleCount) => {
+      const isFemale7 = femaleCount >= 7;
+      
+      return [
+        {
+          id: 1,
+          name: 'MAD MAX',
+          description: 'AMRAP 3분 × 2세트 | 15 Sync Burpee Box Jump → Max Cal Row/Bike/Ski',
+          detail: '여자팀(F1/F2/F3) 3분 → 1분 Break → 남자팀(M1/M2/M3) 3분',
+          slots: [
+            { id: 'F1', label: 'F1', action: 'Sync BBJ + Row', gender: 'female' },
+            { id: 'F2', label: 'F2', action: 'Sync BBJ + Bike', gender: 'female' },
+            { id: 'F3', label: 'F3', action: 'Sync BBJ + Ski', gender: 'female' },
+            { id: 'M1', label: 'M1', action: 'Sync BBJ + Row', gender: 'male' },
+            { id: 'M2', label: 'M2', action: 'Sync BBJ + Bike', gender: 'male' },
+            { id: 'M3', label: 'M3', action: 'Sync BBJ + Ski', gender: 'male' }
+          ]
+        },
+        {
+          id: 2,
+          name: 'TRIPLE LIFT',
+          description: '1RM Hang Clean (4분) → 1RM Hang Snatch (4분) → Max Thruster 135/85 (3분)',
+          detail: 'F1/M1: Hang Clean | F2/M2: Hang Snatch | F3/M3: Thruster',
+          slots: [
+            { id: 'F1', label: 'F1', action: '1RM Hang Clean', gender: 'female' },
+            { id: 'M1', label: 'M1', action: '1RM Hang Clean', gender: 'male' },
+            { id: 'F2', label: 'F2', action: '1RM Hang Snatch', gender: 'female' },
+            { id: 'M2', label: 'M2', action: '1RM Hang Snatch', gender: 'male' },
+            { id: 'F3', label: 'F3', action: 'Max Thruster (85lb)', gender: 'female' },
+            { id: 'M3', label: 'M3', action: 'Max Thruster (135lb)', gender: 'male' }
+          ]
+        },
+        {
+          id: 3,
+          name: 'SKYSCRAPER',
+          description: isFemale7
+            ? 'AMRAP 3분 × 4세트 | 5 Rope Climb → Max MU / Pull Up'
+            : 'AMRAP 3분 × 4세트 | 5 Rope Climb → Max Ring MU / Bar MU / C2B PU / PU',
+          note: isFemale7 
+            ? '여성 7인팀: (3)(4) 모두 여성 Pull Up' 
+            : '여성 6인팀: (3) 남성 C2B Pull Up, (4) 여성 Pull Up',
+          slots: isFemale7 
+            ? [
+                { id: 'M1', label: 'M1', action: '5 Rope Climb + Max Ring MU', gender: 'male' },
+                { id: 'M2', label: 'M2', action: '5 Rope Climb + Max Bar MU', gender: 'male' },
+                { id: 'F1', label: 'F1', action: '5 Rope Climb + Max Pull Up', gender: 'female' },
+                { id: 'F2', label: 'F2', action: '5 Rope Climb + Max Pull Up', gender: 'female' }
+              ]
+            : [
+                { id: 'M1', label: 'M1', action: '5 Rope Climb + Max Ring MU', gender: 'male' },
+                { id: 'M2', label: 'M2', action: '5 Rope Climb + Max Bar MU', gender: 'male' },
+                { id: 'M3', label: 'M3', action: '5 Rope Climb + Max C2B PU', gender: 'male' },
+                { id: 'F1', label: 'F1', action: '5 Rope Climb + Max Pull Up', gender: 'female' }
+              ]
+        },
+        {
+          id: 4,
+          name: 'SUPER TRAIN',
+          description: '6 Rounds Relay For Time | 200m Run + 50m Sled Push',
+          note: isFemale7 
+            ? '여성 7인팀: 3R 여성 출전 (90lbs)' 
+            : '여성 6인팀: 3R 남성 출전 (135lbs)',
+          slots: isFemale7
+            ? [
+                { id: '1R', label: 'F1', action: '200m Run + Sled Push 45lb', gender: 'female' },
+                { id: '2R', label: 'F2', action: '200m Run + Sled Push 90lb', gender: 'female' },
+                { id: '3R', label: 'F3', action: '200m Run + Sled Push 90lb', gender: 'female' },
+                { id: '4R', label: 'M1', action: '200m Run + Sled Push 170lb', gender: 'male' },
+                { id: '5R', label: 'M2', action: '200m Run + Sled Push 215lb', gender: 'male' },
+                { id: '6R', label: 'M3', action: '200m Run + Sled Push 250lb', gender: 'male' }
+              ]
+            : [
+                { id: '1R', label: 'F1', action: '200m Run + Sled Push 45lb', gender: 'female' },
+                { id: '2R', label: 'F2', action: '200m Run + Sled Push 90lb', gender: 'female' },
+                { id: '3R', label: 'M1', action: '200m Run + Sled Push 135lb', gender: 'male' },
+                { id: '4R', label: 'M2', action: '200m Run + Sled Push 170lb', gender: 'male' },
+                { id: '5R', label: 'M3', action: '200m Run + Sled Push 215lb', gender: 'male' },
+                { id: '6R', label: 'M4', action: '200m Run + Sled Push 250lb', gender: 'male' }
+              ]
+        },
+        {
+          id: 5,
+          name: 'TUG OF SLED',
+          description: '슬레드 당기기 | 남자 3명 vs 상대팀 남자 3명',
+          detail: 'Timecap: 30초',
+          slots: [
+            { id: 'M1', label: 'M1', action: 'Tug of Sled', gender: 'male' },
+            { id: 'M2', label: 'M2', action: 'Tug of Sled', gender: 'male' },
+            { id: 'M3', label: 'M3', action: 'Tug of Sled', gender: 'male' }
+          ]
+        },
+        {
+          id: 6,
+          name: 'ROAD TO STRENGTH',
+          description: '1분 Max Work × 6세트 | Leg Press → Chest Press → Seated Row',
+          detail: 'F/M 각각 3가지 머신 순서대로 진행',
+          slots: [
+            { id: 'F1', label: 'F1', action: '1min Max Leg Press', gender: 'female' },
+            { id: 'M1', label: 'M1', action: '1min Max Leg Press', gender: 'male' },
+            { id: 'F2', label: 'F2', action: '1min Max Chest Press', gender: 'female' },
+            { id: 'M2', label: 'M2', action: '1min Max Chest Press', gender: 'male' },
+            { id: 'F3', label: 'F3', action: '1min Max Seated Row', gender: 'female' },
+            { id: 'M3', label: 'M3', action: '1min Max Seated Row', gender: 'male' }
+          ]
+        }
+      ];
+    };
+    
+    // 로컬스토리지 키
+    const STORAGE_KEY = 'crossfit-superbam-assignments';
+    const COACH_STORAGE_KEY = 'crossfit-superbam-coaches';
+    
+    // 컴포넌트: 헤더
+    const Header = ({ selectedTeam, onTeamChange, teamCoaches, onCoachChange }) => {
+      const team = TEAMS_DATA[selectedTeam];
+      const selectedCoach = teamCoaches[selectedTeam];
+      const coachInfo = selectedCoach ? COACHES.find(c => c.id === selectedCoach) : null;
+      const teamDisplayName = coachInfo ? `TEAM ${selectedCoach}` : team.name;
+      
+      return (
+        <header style={{
+          background: 'linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%)',
+          padding: '20px 16px',
+          color: 'white',
+          textAlign: 'center',
+          position: 'sticky',
+          top: 0,
+          zIndex: 100,
+          boxShadow: '0 4px 20px rgba(0,0,0,0.2)'
+        }}>
+          <div style={{ maxWidth: '600px', margin: '0 auto' }}>
+            <h1 className="title-font" style={{ 
+              fontSize: '1.8rem', 
+              marginBottom: '4px',
+              textShadow: '2px 2px 4px rgba(0,0,0,0.3)'
+            }}>
+              💣 CrossFit Superbomb
+            </h1>
+            <p style={{ fontSize: '0.9rem', opacity: 0.95, marginBottom: '4px', fontWeight: '600' }}>
+              2025 YEAR-END PARTY
+            </p>
+            <p style={{ fontSize: '0.8rem', opacity: 0.85, marginBottom: '12px' }}>
+              📅 12/6 (SAT) 13:00
+            </p>
+            
+            <div style={{ display: 'flex', gap: '8px', justifyContent: 'center', flexWrap: 'wrap' }}>
+              {Object.keys(TEAMS_DATA).map(teamKey => {
+                const coach = teamCoaches[teamKey];
+                const displayName = coach ? `TEAM ${coach}` : `TEAM ${teamKey}`;
+                
+                return (
+                  <button
+                    key={teamKey}
+                    onClick={() => onTeamChange(teamKey)}
+                    style={{
+                      padding: '8px 16px',
+                      border: 'none',
+                      borderRadius: '20px',
+                      fontWeight: '700',
+                      fontSize: '0.8rem',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s ease',
+                      background: selectedTeam === teamKey 
+                        ? 'white' 
+                        : 'rgba(255,255,255,0.2)',
+                      color: selectedTeam === teamKey 
+                        ? 'var(--primary-dark)' 
+                        : 'white',
+                      transform: selectedTeam === teamKey ? 'scale(1.05)' : 'scale(1)'
+                    }}
+                  >
+                    {displayName}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </header>
+      );
+    };
+    
+    // 컴포넌트: 코치 선택 및 와드 배정
+    const CoachSection = ({ teamKey, teamCoaches, onCoachChange, coachWod, onCoachWodChange, eventsData, assignments }) => {
+      const team = TEAMS_DATA[teamKey];
+      const selectedCoach = teamCoaches[teamKey];
+      const coachInfo = selectedCoach ? COACHES.find(c => c.id === selectedCoach) : null;
+      
+      // 이미 다른 팀에 배정된 코치 확인
+      const assignedCoaches = Object.entries(teamCoaches)
+        .filter(([key, value]) => key !== teamKey && value)
+        .map(([key, value]) => value);
+      
+      const availableCoaches = COACHES.filter(c => 
+        team.allowedCoaches.includes(c.id) && !assignedCoaches.includes(c.id)
+      );
+      
+      // 코치 와드 배정 카운트
+      const coachWodCount = coachWod[teamKey] ? 1 : 0;
+      
+      return (
+        <div style={{
+          background: 'var(--bg-card)',
+          borderRadius: '16px',
+          padding: '16px',
+          margin: '16px 16px 0',
+          boxShadow: 'var(--shadow)'
+        }}>
+          <h3 style={{ 
+            fontSize: '1rem', 
+            marginBottom: '12px',
+            color: 'var(--primary-dark)',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px'
+          }}>
+            🎯 코치 배정
+          </h3>
+          
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+            {/* 코치 선택 */}
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '10px',
+              flexWrap: 'wrap'
+            }}>
+              <span style={{ fontSize: '0.85rem', fontWeight: '600', minWidth: '60px' }}>
+                코치:
+              </span>
+              <select
+                value={selectedCoach || ''}
+                onChange={(e) => onCoachChange(teamKey, e.target.value || null)}
+                style={{
+                  flex: 1,
+                  minWidth: '120px',
+                  padding: '10px 12px',
+                  border: '2px solid #e0d5c7',
+                  borderRadius: '10px',
+                  fontSize: '0.9rem',
+                  background: selectedCoach ? '#f0fff0' : 'white',
+                  cursor: 'pointer',
+                  fontFamily: 'inherit',
+                  fontWeight: selectedCoach ? '600' : '400'
+                }}
+              >
+                <option value="">코치 선택 (제비뽑기)</option>
+                {availableCoaches.map(coach => (
+                  <option key={coach.id} value={coach.id}>
+                    {coach.name} 코치 ({coach.gender === 'male' ? '남' : '여'})
+                  </option>
+                ))}
+              </select>
+              
+              {selectedCoach && (
+                <span style={{
+                  padding: '6px 12px',
+                  borderRadius: '20px',
+                  fontSize: '0.8rem',
+                  fontWeight: '600',
+                  background: coachWodCount === 1 ? 'rgba(34, 139, 34, 0.15)' : 'rgba(255, 140, 0, 0.15)',
+                  color: coachWodCount === 1 ? 'var(--success)' : 'var(--warning)',
+                  border: `1px solid ${coachWodCount === 1 ? 'var(--success)' : 'var(--warning)'}`
+                }}>
+                  와드 {coachWodCount}/1 {coachWodCount === 1 && '✓'}
+                </span>
+              )}
+            </div>
+            
+            {/* 코치 와드 선택 */}
+            {selectedCoach && (
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '10px',
+                flexWrap: 'wrap'
+              }}>
+                <span style={{ fontSize: '0.85rem', fontWeight: '600', minWidth: '60px' }}>
+                  와드:
+                </span>
+                <select
+                  value={coachWod[teamKey] || ''}
+                  onChange={(e) => onCoachWodChange(teamKey, e.target.value ? parseInt(e.target.value) : null)}
+                  style={{
+                    flex: 1,
+                    minWidth: '120px',
+                    padding: '10px 12px',
+                    border: '2px solid #e0d5c7',
+                    borderRadius: '10px',
+                    fontSize: '0.9rem',
+                    background: coachWod[teamKey] ? '#f0fff0' : 'white',
+                    cursor: 'pointer',
+                    fontFamily: 'inherit',
+                    fontWeight: coachWod[teamKey] ? '600' : '400'
+                  }}
+                >
+                  <option value="">와드 선택 (제비뽑기)</option>
+                  {eventsData.map(event => (
+                    <option key={event.id} value={event.id}>
+                      Event {event.id} - {event.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
+            
+            {teamKey === 'A' && (
+              <div style={{
+                fontSize: '0.75rem',
+                color: 'var(--accent-red)',
+                background: 'rgba(196, 30, 58, 0.08)',
+                padding: '8px 12px',
+                borderRadius: '8px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px'
+              }}>
+                ⚠️ 남녀비율을 위해 예지 코치는 TEAM A에 배정 불가
+              </div>
+            )}
+          </div>
+        </div>
+      );
+    };
+    
+    // 컴포넌트: 멤버 카운트 표시
+    const MemberStatus = ({ members, assignments, teamKey, eventsData, teamCoaches, coachWod }) => {
+      const selectedCoach = teamCoaches[teamKey];
+      const coachInfo = selectedCoach ? COACHES.find(c => c.id === selectedCoach) : null;
+      const coachWodEvent = coachWod[teamKey];
+      
+      const getAssignmentCount = (name) => {
+        let count = 0;
+        Object.values(assignments).forEach(eventAssignments => {
+          Object.values(eventAssignments).forEach(assignedName => {
+            if (assignedName === name) count++;
+          });
+        });
+        return count;
+      };
+      
+      const allMembers = [...members.male, ...members.female];
+      const completed = allMembers.filter(m => getAssignmentCount(m) === 2).length;
+      const incomplete = allMembers.filter(m => getAssignmentCount(m) < 2).length;
+      const over = allMembers.filter(m => getAssignmentCount(m) > 2).length;
+      
+      // 코치 배정 상태
+      const coachCompleted = coachInfo && coachWodEvent ? 1 : 0;
+      const coachIncomplete = coachInfo && !coachWodEvent ? 1 : 0;
+      
+      // 전체 합산
+      const totalCompleted = completed + coachCompleted;
+      const totalIncomplete = incomplete + coachIncomplete;
+      
+      return (
+        <div style={{
+          background: 'var(--bg-card)',
+          borderRadius: '16px',
+          padding: '16px',
+          margin: '16px',
+          boxShadow: 'var(--shadow)'
+        }}>
+          <h3 style={{ 
+            fontSize: '1rem', 
+            marginBottom: '12px',
+            color: 'var(--primary-dark)',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px'
+          }}>
+            📊 배정 현황
+            {coachInfo && (
+              <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: '400' }}>
+                (멤버 {allMembers.length}명 + 코치 1명)
+              </span>
+            )}
+          </h3>
+          
+          <div style={{ 
+            display: 'grid', 
+            gridTemplateColumns: 'repeat(3, 1fr)', 
+            gap: '8px',
+            textAlign: 'center'
+          }}>
+            <div style={{
+              background: 'rgba(34, 139, 34, 0.1)',
+              padding: '12px 8px',
+              borderRadius: '12px',
+              border: '2px solid var(--success)'
+            }}>
+              <div style={{ fontSize: '1.5rem', fontWeight: '700', color: 'var(--success)' }}>
+                {totalCompleted}
+              </div>
+              <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>완료 ✓</div>
+            </div>
+            
+            <div style={{
+              background: 'rgba(255, 140, 0, 0.1)',
+              padding: '12px 8px',
+              borderRadius: '12px',
+              border: '2px solid var(--warning)'
+            }}>
+              <div style={{ fontSize: '1.5rem', fontWeight: '700', color: 'var(--warning)' }}>
+                {totalIncomplete}
+              </div>
+              <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>미완료</div>
+            </div>
+            
+            <div style={{
+              background: over > 0 ? 'rgba(196, 30, 58, 0.1)' : 'rgba(200,200,200,0.1)',
+              padding: '12px 8px',
+              borderRadius: '12px',
+              border: `2px solid ${over > 0 ? 'var(--accent-red)' : '#ccc'}`
+            }}>
+              <div style={{ 
+                fontSize: '1.5rem', 
+                fontWeight: '700', 
+                color: over > 0 ? 'var(--accent-red)' : '#999'
+              }}>
+                {over}
+              </div>
+              <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>초과 ⚠</div>
+            </div>
+          </div>
+        </div>
+      );
+    };
+    
+    // 컴포넌트: 멤버 리스트
+    const MemberList = ({ members, assignments, expanded, onToggle, eventsData, teamCoaches, teamKey, coachWod }) => {
+      const selectedCoach = teamCoaches[teamKey];
+      const coachInfo = selectedCoach ? COACHES.find(c => c.id === selectedCoach) : null;
+      const coachWodEvent = coachWod[teamKey];
+      
+      const getAssignmentCount = (name) => {
+        let count = 0;
+        Object.values(assignments).forEach(eventAssignments => {
+          Object.values(eventAssignments).forEach(assignedName => {
+            if (assignedName === name) count++;
+          });
+        });
+        return count;
+      };
+      
+      const getAssignedEvents = (name) => {
+        const events = [];
+        Object.entries(assignments).forEach(([eventId, eventAssignments]) => {
+          Object.entries(eventAssignments).forEach(([slotId, assignedName]) => {
+            if (assignedName === name) {
+              events.push(`E${eventId}`);
+            }
+          });
+        });
+        return events;
+      };
+      
+      const renderMember = (name, gender, isCoach = false) => {
+        const count = isCoach ? (coachWodEvent ? 1 : 0) : getAssignmentCount(name);
+        const requiredCount = isCoach ? 1 : 2;
+        const assignedEvents = isCoach ? (coachWodEvent ? [`E${coachWodEvent}`] : []) : getAssignedEvents(name);
+        const status = count === requiredCount ? 'complete' : count > requiredCount ? 'over' : 'incomplete';
+        
+        return (
+          <div 
+            key={name}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              padding: '10px 12px',
+              background: status === 'complete' 
+                ? 'rgba(34, 139, 34, 0.08)' 
+                : status === 'over'
+                  ? 'rgba(196, 30, 58, 0.08)'
+                  : 'white',
+              borderRadius: '10px',
+              marginBottom: '6px',
+              border: `1px solid ${
+                status === 'complete' 
+                  ? 'var(--success)' 
+                  : status === 'over'
+                    ? 'var(--accent-red)'
+                    : '#e0d5c7'
+              }`
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span style={{ 
+                fontSize: '0.7rem',
+                padding: '2px 6px',
+                borderRadius: '4px',
+                background: isCoach 
+                  ? '#FFF3E0' 
+                  : gender === 'male' ? '#E3F2FD' : '#FCE4EC',
+                color: isCoach 
+                  ? '#E65100'
+                  : gender === 'male' ? '#1565C0' : '#C2185B'
+              }}>
+                {isCoach ? '코치' : gender === 'male' ? '남' : '여'}
+              </span>
+              <span style={{ fontWeight: '500', fontSize: '0.95rem' }}>{name}</span>
+            </div>
+            
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              {assignedEvents.length > 0 && (
+                <span style={{ 
+                  fontSize: '0.7rem', 
+                  color: 'var(--text-muted)',
+                  background: 'rgba(139, 69, 19, 0.1)',
+                  padding: '2px 6px',
+                  borderRadius: '4px'
+                }}>
+                  {assignedEvents.join(', ')}
+                </span>
+              )}
+              <span style={{
+                fontWeight: '700',
+                fontSize: '0.85rem',
+                color: status === 'complete' 
+                  ? 'var(--success)' 
+                  : status === 'over'
+                    ? 'var(--accent-red)'
+                    : 'var(--warning)'
+              }}>
+                {count}/{requiredCount} {status === 'complete' && '✓'}
+              </span>
+            </div>
+          </div>
+        );
+      };
+      
+      const totalMembers = members.male.length + members.female.length + (coachInfo ? 1 : 0);
+      
+      return (
+        <div style={{
+          background: 'var(--bg-card)',
+          borderRadius: '16px',
+          margin: '0 16px 16px',
+          boxShadow: 'var(--shadow)',
+          overflow: 'hidden'
+        }}>
+          <button
+            onClick={onToggle}
+            style={{
+              width: '100%',
+              padding: '16px',
+              background: 'none',
+              border: 'none',
+              cursor: 'pointer',
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              borderBottom: expanded ? '1px solid #e0d5c7' : 'none'
+            }}
+          >
+            <h3 style={{ 
+              fontSize: '1rem',
+              color: 'var(--primary-dark)',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px'
+            }}>
+              👥 팀원 목록 ({totalMembers}명{coachInfo ? ' · 코치 포함' : ''})
+            </h3>
+            <span style={{ 
+              transform: expanded ? 'rotate(180deg)' : 'rotate(0deg)',
+              transition: 'transform 0.2s ease',
+              fontSize: '1.2rem'
+            }}>
+              ▼
+            </span>
+          </button>
+          
+          {expanded && (
+            <div style={{ padding: '12px 16px' }}>
+              {/* 코치 */}
+              {coachInfo && (
+                <div style={{ marginBottom: '12px' }}>
+                  <div style={{ 
+                    fontSize: '0.8rem', 
+                    fontWeight: '600',
+                    color: '#E65100',
+                    marginBottom: '8px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '4px'
+                  }}>
+                    👑 코치 (1명) - 와드 1개 필수
+                  </div>
+                  {renderMember(`${coachInfo.name} 코치`, coachInfo.gender, true)}
+                </div>
+              )}
+              
+              <div style={{ marginBottom: '12px' }}>
+                <div style={{ 
+                  fontSize: '0.8rem', 
+                  fontWeight: '600',
+                  color: '#1565C0',
+                  marginBottom: '8px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '4px'
+                }}>
+                  🚹 남자 ({members.male.length}명)
+                </div>
+                {members.male.map(name => renderMember(name, 'male'))}
+              </div>
+              
+              <div>
+                <div style={{ 
+                  fontSize: '0.8rem', 
+                  fontWeight: '600',
+                  color: '#C2185B',
+                  marginBottom: '8px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '4px'
+                }}>
+                  🚺 여자 ({members.female.length}명)
+                </div>
+                {members.female.map(name => renderMember(name, 'female'))}
+              </div>
+            </div>
+          )}
+        </div>
+      );
+    };
+    
+    // 컴포넌트: 이벤트 카드
+    const EventCard = ({ event, members, assignments, onAssign, onResetEvent, animatingSlot, coachWodEvent, coachInfo, teamDisplayName, femaleCount }) => {
+      const [showRulebook, setShowRulebook] = useState(false);
+      const [showEventCapture, setShowEventCapture] = useState(false);
+      const currentEventAssignments = assignments[event.id] || {};
+      
+      // 이 이벤트에 배정된 슬롯 수
+      const assignedCount = Object.values(currentEventAssignments).filter(Boolean).length;
+      
+      // 코치가 이 와드에 배정되었는지 확인
+      const isCoachEvent = coachWodEvent === event.id;
+      
+      // 현재 이벤트에 이미 배정된 멤버들
+      const alreadyAssignedInThisEvent = Object.values(currentEventAssignments).filter(Boolean);
+      
+      // 전체 배정에서 각 멤버의 배정 횟수 계산
+      const getMemberAssignmentCount = (name) => {
+        let count = 0;
+        Object.values(assignments).forEach(eventAssignments => {
+          Object.values(eventAssignments).forEach(assignedName => {
+            if (assignedName === name) count++;
+          });
+        });
+        return count;
+      };
+      
+      // 코치가 이미 어느 슬롯에 배정되었는지 확인
+      const coachAssignedSlotId = isCoachEvent && coachInfo ? 
+        Object.entries(currentEventAssignments).find(([id, name]) => name && name.includes('코치'))?.[0] : null;
+      
+      const getAvailableMembers = (slot, canSelectCoach = false) => {
+        const allAssigned = [];
+        Object.values(assignments).forEach(eventAssignments => {
+          Object.values(eventAssignments).forEach(name => {
+            if (name) allAssigned.push(name);
+          });
+        });
+        
+        let candidates = [];
+        if (slot.gender === 'male') {
+          candidates = members.male;
+        } else if (slot.gender === 'female') {
+          candidates = members.female;
+        } else {
+          candidates = [...members.male, ...members.female];
+        }
+        
+        // 코치 선택 가능한 슬롯인 경우 코치도 후보에 추가
+        if (canSelectCoach && coachInfo) {
+          candidates = [...candidates, coachInfo.name + ' 코치'];
+        }
+        
+        // 현재 슬롯에 배정된 사람은 제외하지 않음 (자기 자신은 선택 가능)
+        const currentSlotValue = currentEventAssignments[slot.id] || '';
+        
+        return candidates.map(name => {
+          const count = allAssigned.filter(n => n === name).length;
+          // 같은 이벤트 내 다른 슬롯에 이미 배정된 경우 disabled
+          const isAssignedElsewhere = alreadyAssignedInThisEvent.includes(name) && name !== currentSlotValue;
+          return { name, count, disabled: isAssignedElsewhere };
+        });
+      };
+      
+      // 모든 슬롯 표시
+      const visibleSlots = event.slots;
+      
+      return (
+        <>
+        <div 
+          className="animate-in"
+          style={{
+            background: 'var(--bg-card)',
+            borderRadius: '16px',
+            margin: '0 16px 16px',
+            boxShadow: 'var(--shadow)',
+            overflow: 'hidden',
+            animationDelay: `${event.id * 0.05}s`,
+            border: isCoachEvent ? '2px solid #E65100' : 'none'
+          }}
+        >
+          {/* 이벤트 헤더 - 클릭 시 룰북 토글 */}
+          <div 
+            onClick={() => setShowRulebook(!showRulebook)}
+            style={{
+              background: isCoachEvent
+                ? 'linear-gradient(135deg, #E65100 0%, #FF8C00 100%)'
+                : 'linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%)',
+              padding: '16px',
+              color: 'white',
+              cursor: 'pointer'
+            }}
+          >
+            <div style={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: '10px',
+              marginBottom: '10px'
+            }}>
+              <span style={{
+                background: 'rgba(255,255,255,0.3)',
+                padding: '6px 14px',
+                borderRadius: '20px',
+                fontSize: '0.8rem',
+                fontWeight: '700',
+                letterSpacing: '0.5px'
+              }}>
+                EVENT {event.id}
+              </span>
+              <h3 className="title-font" style={{ fontSize: '1.4rem', letterSpacing: '1px', flex: 1 }}>
+                {event.name}
+              </h3>
+              {isCoachEvent && (
+                <span style={{
+                  background: 'rgba(255,255,255,0.25)',
+                  padding: '4px 10px',
+                  borderRadius: '10px',
+                  fontSize: '0.7rem'
+                }}>
+                  👑 코치
+                </span>
+              )}
+              <span style={{
+                background: 'rgba(255,255,255,0.2)',
+                padding: '4px 8px',
+                borderRadius: '6px',
+                fontSize: '0.7rem',
+                transform: showRulebook ? 'rotate(180deg)' : 'rotate(0deg)',
+                transition: 'transform 0.2s ease'
+              }}>
+                ▼
+              </span>
+            </div>
+          </div>
+          
+          {/* 룰북 아코디언 */}
+          {showRulebook && (
+            <div style={{
+              background: 'rgba(44, 24, 16, 0.95)',
+              color: 'white',
+              padding: '16px',
+              fontSize: '0.8rem',
+              whiteSpace: 'pre-wrap',
+              lineHeight: '1.6',
+              maxHeight: '300px',
+              overflowY: 'auto'
+            }}>
+              {RULEBOOK[event.id]}
+            </div>
+          )}
+          
+          {/* 와드 상세 내용 */}
+          <div style={{
+            background: 'linear-gradient(180deg, rgba(139,69,19,0.08) 0%, rgba(139,69,19,0.02) 100%)',
+            padding: '14px 16px',
+            borderBottom: '1px solid rgba(139,69,19,0.1)'
+          }}>
+            <div style={{
+              display: 'flex',
+              alignItems: 'flex-start',
+              gap: '10px',
+              marginBottom: (event.note || event.detail) ? '10px' : '0'
+            }}>
+              <span style={{ fontSize: '1.1rem' }}>🏋️</span>
+              <div>
+                <div style={{ 
+                  fontSize: '0.95rem', 
+                  fontWeight: '600',
+                  color: 'var(--primary-dark)',
+                  lineHeight: '1.5'
+                }}>
+                  {event.description}
+                </div>
+                {event.detail && (
+                  <div style={{
+                    fontSize: '0.8rem',
+                    color: 'var(--text-muted)',
+                    marginTop: '4px'
+                  }}>
+                    {event.detail}
+                  </div>
+                )}
+              </div>
+            </div>
+            
+            {event.note && (
+              <div style={{
+                display: 'flex',
+                alignItems: 'flex-start',
+                gap: '8px',
+                background: 'rgba(218, 165, 32, 0.15)',
+                padding: '10px 12px',
+                borderRadius: '10px',
+                border: '1px solid rgba(218, 165, 32, 0.3)'
+              }}>
+                <span style={{ fontSize: '0.9rem' }}>💡</span>
+                <span style={{ 
+                  fontSize: '0.8rem', 
+                  color: 'var(--primary-dark)',
+                  lineHeight: '1.4'
+                }}>
+                  {event.note}
+                </span>
+              </div>
+            )}
+            
+            {/* 코치 배정 표시 */}
+            {isCoachEvent && coachInfo && (
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                background: 'rgba(230, 81, 0, 0.15)',
+                padding: '10px 12px',
+                borderRadius: '10px',
+                border: '1px solid rgba(230, 81, 0, 0.3)',
+                marginTop: '10px'
+              }}>
+                <span style={{ fontSize: '0.9rem' }}>👑</span>
+                <span style={{ 
+                  fontSize: '0.85rem', 
+                  color: '#E65100',
+                  fontWeight: '600'
+                }}>
+                  {coachInfo.name} 코치 참여
+                </span>
+              </div>
+            )}
+          </div>
+          
+          <div style={{ padding: '16px' }}>
+            {/* 이벤트 액션 버튼들 */}
+            {assignedCount > 0 && (
+              <div style={{ 
+                display: 'flex', 
+                justifyContent: 'flex-end', 
+                gap: '8px',
+                marginBottom: '10px' 
+              }}>
+                <button
+                  onClick={() => setShowEventCapture(true)}
+                  style={{
+                    padding: '6px 12px',
+                    border: '1px solid var(--primary)',
+                    borderRadius: '8px',
+                    background: 'white',
+                    color: 'var(--primary)',
+                    fontSize: '0.75rem',
+                    fontWeight: '600',
+                    cursor: 'pointer',
+                    fontFamily: 'inherit',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '4px'
+                  }}
+                >
+                  📷 저장
+                </button>
+                <button
+                  onClick={() => onResetEvent(event.id)}
+                  style={{
+                    padding: '6px 12px',
+                    border: '1px solid var(--accent-red)',
+                    borderRadius: '8px',
+                    background: 'white',
+                    color: 'var(--accent-red)',
+                    fontSize: '0.75rem',
+                    fontWeight: '600',
+                    cursor: 'pointer',
+                    fontFamily: 'inherit',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '4px'
+                  }}
+                >
+                  🔄 초기화
+                </button>
+              </div>
+            )}
+            
+            <div style={{ 
+              display: 'grid', 
+              gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))',
+              gap: '10px'
+            }}>
+              {visibleSlots.map((slot, slotIndex) => {
+                // 코치가 배정된 이벤트에서 같은 성별 슬롯인지 확인
+                const isSameGenderAsCoach = isCoachEvent && coachInfo && slot.gender === coachInfo.gender;
+                
+                // 코치가 아직 배정되지 않았거나, 이 슬롯에 코치가 배정된 경우 코치 선택 가능
+                const canSelectCoach = isSameGenderAsCoach && (!coachAssignedSlotId || coachAssignedSlotId === slot.id);
+                
+                const available = getAvailableMembers(slot, canSelectCoach);
+                const currentValue = currentEventAssignments[slot.id] || '';
+                const isAnimating = animatingSlot === `${event.id}-${slot.id}`;
+                
+                // 현재 배정된 멤버의 전체 배정 횟수 확인
+                const assignedMemberCount = currentValue ? getMemberAssignmentCount(currentValue) : 0;
+                const isOverAssigned = assignedMemberCount > 2;
+                
+                // 코치가 배정된 슬롯인지 확인
+                const isCoachAssignedSlot = currentValue && currentValue.includes('코치');
+                
+                // 슬롯 배경색 결정
+                let slotBackground = 'white';
+                let slotBorder = currentValue ? '2px solid var(--success)' : '2px dashed #d0c4b4';
+                
+                if (isOverAssigned) {
+                  slotBackground = 'rgba(196, 30, 58, 0.15)';
+                  slotBorder = '2px solid var(--accent-red)';
+                } else if (isCoachAssignedSlot) {
+                  slotBackground = 'rgba(230, 81, 0, 0.12)';
+                  slotBorder = '2px solid #E65100';
+                } else if (isSameGenderAsCoach && !coachAssignedSlotId && !currentValue) {
+                  // 코치 미배정 상태에서 같은 성별 슬롯들
+                  slotBackground = 'rgba(230, 81, 0, 0.06)';
+                  slotBorder = '2px dashed #E65100';
+                }
+                
+                return (
+                  <div 
+                    key={slot.id}
+                    className={isAnimating ? 'pulse' : ''}
+                    style={{
+                      background: slotBackground,
+                      borderRadius: '12px',
+                      padding: '12px',
+                      border: slotBorder
+                    }}
+                  >
+                    {/* 슬롯 라벨 (M1, F2 등) */}
+                    <div style={{ 
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '6px',
+                      marginBottom: '4px'
+                    }}>
+                      <span style={{
+                        width: '10px',
+                        height: '10px',
+                        borderRadius: '50%',
+                        background: isCoachAssignedSlot ? '#E65100' :
+                          slot.gender === 'male' 
+                            ? '#1565C0' 
+                            : slot.gender === 'female'
+                              ? '#C2185B'
+                              : '#9C27B0'
+                      }}></span>
+                      <span style={{
+                        fontSize: '0.95rem',
+                        fontWeight: '700',
+                        color: isCoachAssignedSlot ? '#E65100' : 'var(--primary-dark)'
+                      }}>
+                        {slot.label}
+                        {isCoachAssignedSlot && ' 👑'}
+                      </span>
+                      {isSameGenderAsCoach && !coachAssignedSlotId && (
+                        <span style={{
+                          fontSize: '0.6rem',
+                          background: 'rgba(230, 81, 0, 0.2)',
+                          color: '#E65100',
+                          padding: '2px 6px',
+                          borderRadius: '4px'
+                        }}>코치가능</span>
+                      )}
+                      {isOverAssigned && (
+                        <span style={{
+                          fontSize: '0.65rem',
+                          background: 'var(--accent-red)',
+                          color: 'white',
+                          padding: '2px 6px',
+                          borderRadius: '4px',
+                          marginLeft: 'auto'
+                        }}>초과!</span>
+                      )}
+                    </div>
+                    
+                    {/* 동작 설명 */}
+                    <div style={{
+                      fontSize: '0.75rem',
+                      color: 'var(--text-muted)',
+                      marginBottom: '8px',
+                      padding: '6px 8px',
+                      background: isCoachAssignedSlot ? 'rgba(230, 81, 0, 0.1)' : 'rgba(139, 69, 19, 0.06)',
+                      borderRadius: '6px',
+                      lineHeight: '1.3'
+                    }}>
+                      {slot.action}
+                    </div>
+                    
+                    <select
+                      value={currentValue}
+                      onChange={(e) => onAssign(event.id, slot.id, e.target.value)}
+                      style={{
+                        width: '100%',
+                        padding: '8px',
+                        border: '1px solid #e0d5c7',
+                        borderRadius: '8px',
+                        fontSize: '0.85rem',
+                        background: isOverAssigned ? 'rgba(196, 30, 58, 0.1)' : 
+                          isCoachAssignedSlot ? 'rgba(230, 81, 0, 0.1)' :
+                          currentValue ? '#f0fff0' : 'white',
+                        cursor: 'pointer',
+                        fontFamily: 'inherit'
+                      }}
+                    >
+                      <option value="">선택...</option>
+                      {available.map(({ name, count, disabled }) => (
+                        <option 
+                          key={name} 
+                          value={name}
+                          disabled={disabled}
+                          style={{
+                            color: disabled ? '#999' : count >= 2 ? '#C41E3A' : 'inherit'
+                          }}
+                        >
+                          {name} {count > 0 && `(${count})`} {disabled && '- 이미 배정됨'}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+        
+        {/* 이벤트별 캡처 모달 */}
+        {showEventCapture && (
+          <EventCaptureView
+            event={event}
+            assignments={currentEventAssignments}
+            coachInfo={isCoachEvent ? coachInfo : null}
+            teamDisplayName={teamDisplayName}
+            femaleCount={femaleCount}
+            onClose={() => setShowEventCapture(false)}
+          />
+        )}
+        </>
+      );
+    };
+    
+    // 컴포넌트: 이벤트별 캡처 뷰
+    const EventCaptureView = ({ event, assignments, coachInfo, teamDisplayName, femaleCount, onClose }) => {
+      const captureRef = useRef(null);
+      const [processing, setProcessing] = useState(false);
+      const [scale, setScale] = useState(0.8);
+      
+      const getImageBlob = async () => {
+        const captureEl = captureRef.current;
+        const originalTransform = captureEl.style.transform;
+        captureEl.style.transform = 'scale(1)';
+        
+        await new Promise(resolve => setTimeout(resolve, 100));
+        
+        const canvas = await html2canvas(captureEl, { 
+          backgroundColor: '#FDF5E6', 
+          scale: 2.5,
+          windowWidth: 400,
+          width: 400
+        });
+        
+        captureEl.style.transform = originalTransform;
+        
+        return new Promise(resolve => {
+          canvas.toBlob(blob => resolve(blob), 'image/png');
+        });
+      };
+      
+      const handleDownload = async (blob) => {
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.download = `${teamDisplayName || 'TEAM'}-EVENT${event.id}-${event.name}.png`;
+        link.href = url;
+        link.click();
+        URL.revokeObjectURL(url);
+      };
+      
+      const handleShareOrDownload = async () => {
+        if (!captureRef.current) return;
+        setProcessing(true);
+        try {
+          const blob = await getImageBlob();
+          const file = new File([blob], `${teamDisplayName || 'TEAM'}-EVENT${event.id}-${event.name}.png`, { type: 'image/png' });
+          
+          if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+            await navigator.share({
+              title: `${teamDisplayName} - EVENT ${event.id}`,
+              text: `${event.name} 배정표`,
+              files: [file]
+            });
+          } else {
+            await handleDownload(blob);
+          }
+        } catch (err) {
+          if (err.name === 'AbortError') {
+            // 사용자가 공유 취소
+          } else {
+            // 공유 실패시 다운로드로 대체
+            try {
+              const blob = await getImageBlob();
+              await handleDownload(blob);
+            } catch (downloadErr) {
+              console.error('저장 실패:', downloadErr);
+              alert('저장에 실패했습니다.');
+            }
+          }
+        }
+        setProcessing(false);
+      };
+      
+      // 배정된 슬롯들
+      const assignedSlots = event.slots.filter(slot => assignments[slot.id]);
+      
+      return (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.9)', zIndex: 1000, display: 'flex', flexDirection: 'column' }}>
+          {/* 상단 컨트롤 바 */}
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 16px', background: 'rgba(255,255,255,0.1)', flexWrap: 'wrap', gap: '10px', flexShrink: 0 }}>
+            <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
+              <button onClick={() => setScale(Math.max(0.5, scale - 0.1))} style={{ padding: '6px 14px', border: 'none', borderRadius: '6px', background: 'rgba(255,255,255,0.2)', color: 'white', fontWeight: '700', fontSize: '1rem', cursor: 'pointer' }}>−</button>
+              <span style={{ color: 'white', fontSize: '0.8rem', minWidth: '50px', textAlign: 'center' }}>{Math.round(scale * 100)}%</span>
+              <button onClick={() => setScale(Math.min(1.5, scale + 0.1))} style={{ padding: '6px 14px', border: 'none', borderRadius: '6px', background: 'rgba(255,255,255,0.2)', color: 'white', fontWeight: '700', fontSize: '1rem', cursor: 'pointer' }}>+</button>
+            </div>
+            <button onClick={onClose} style={{ padding: '6px 16px', border: '2px solid white', borderRadius: '8px', background: 'transparent', color: 'white', fontWeight: '600', cursor: 'pointer', fontFamily: 'inherit' }}>✕ 닫기</button>
+          </div>
+          
+          {/* 미리보기 영역 */}
+          <div style={{ flex: 1, overflow: 'auto', padding: '20px', display: 'flex', justifyContent: 'center', alignItems: 'flex-start' }}>
+            <div ref={captureRef} style={{ 
+              background: 'var(--bg-cream)', 
+              padding: '20px', 
+              borderRadius: '16px', 
+              transform: `scale(${scale})`, 
+              transformOrigin: 'top center', 
+              width: '400px', 
+              minWidth: '400px' 
+            }}>
+              {/* 헤더 */}
+              <div style={{ textAlign: 'center', marginBottom: '16px', paddingBottom: '12px', borderBottom: '2px solid var(--primary)' }}>
+                <h2 className="title-font" style={{ color: 'var(--primary-dark)', fontSize: '1.3rem', marginBottom: '4px' }}>💣 CrossFit Superbomb</h2>
+                <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>2025 YEAR-END PARTY · 12/6 (SAT) 13:00</p>
+                <p style={{ color: 'var(--primary)', fontWeight: '600', fontSize: '1rem', marginTop: '8px' }}>{teamDisplayName}</p>
+              </div>
+              
+              {/* 이벤트 카드 */}
+              <div style={{ background: 'white', borderRadius: '12px', overflow: 'hidden', border: coachInfo ? '2px solid #E65100' : '1px solid #e0d5c7' }}>
+                <div style={{ 
+                  background: coachInfo 
+                    ? 'linear-gradient(135deg, #E65100 0%, #FF8C00 100%)' 
+                    : 'linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%)', 
+                  padding: '12px 16px', 
+                  color: 'white' 
+                }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <span style={{ background: 'rgba(255,255,255,0.3)', padding: '4px 10px', borderRadius: '10px', fontSize: '0.7rem', fontWeight: '700' }}>EVENT {event.id}</span>
+                    <span className="title-font" style={{ fontSize: '1rem', flex: 1 }}>{event.name}</span>
+                    {coachInfo && <span style={{ fontSize: '0.7rem' }}>👑 코치</span>}
+                  </div>
+                </div>
+                
+                {/* 배정 내용 */}
+                <div style={{ padding: '12px' }}>
+                  <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '10px', lineHeight: '1.4' }}>
+                    {event.description}
+                  </div>
+                  
+                  {/* 슬롯 그리드 */}
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '8px' }}>
+                    {assignedSlots.map(slot => {
+                      const memberName = assignments[slot.id];
+                      const isCoach = memberName && memberName.includes('코치');
+                      
+                      // 배경색/테두리 결정 (EventCard와 동일한 톤)
+                      const slotBackground = isCoach ? 'rgba(230, 81, 0, 0.12)' : 'white';
+                      const slotBorder = isCoach ? '2px solid #E65100' : '2px solid var(--success)';
+                      
+                      // 성별 표시 색상
+                      const genderColor = isCoach ? '#E65100' :
+                        slot.gender === 'male' ? '#1565C0' : '#C2185B';
+                      
+                      return (
+                        <div key={slot.id} style={{ 
+                          background: slotBackground, 
+                          padding: '10px', 
+                          borderRadius: '12px',
+                          border: slotBorder
+                        }}>
+                          {/* 슬롯 라벨 */}
+                          <div style={{ 
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '6px',
+                            marginBottom: '4px'
+                          }}>
+                            <span style={{
+                              width: '8px',
+                              height: '8px',
+                              borderRadius: '50%',
+                              background: genderColor
+                            }}></span>
+                            <span style={{
+                              fontSize: '0.8rem',
+                              fontWeight: '700',
+                              color: isCoach ? '#E65100' : 'var(--primary-dark)'
+                            }}>
+                              {slot.label}
+                              {isCoach && ' 👑'}
+                            </span>
+                          </div>
+                          
+                          {/* 동작 설명 */}
+                          <div style={{
+                            fontSize: '0.7rem',
+                            color: 'var(--text-muted)',
+                            marginBottom: '6px',
+                            padding: '4px 6px',
+                            background: isCoach ? 'rgba(230, 81, 0, 0.1)' : 'rgba(139, 69, 19, 0.06)',
+                            borderRadius: '4px',
+                            lineHeight: '1.3'
+                          }}>
+                            {slot.action}
+                          </div>
+                          
+                          {/* 배정된 멤버 */}
+                          <div style={{ 
+                            fontSize: '0.9rem', 
+                            fontWeight: '600', 
+                            color: 'var(--text-dark)',
+                            padding: '6px 8px',
+                            background: isCoach ? 'rgba(230, 81, 0, 0.1)' : '#f0fff0',
+                            borderRadius: '6px',
+                            textAlign: 'center'
+                          }}>
+                            {memberName}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+              
+              {/* 푸터 */}
+              <div style={{ textAlign: 'center', marginTop: '12px', fontSize: '0.7rem', color: 'var(--text-muted)' }}>
+                🏋️ 크로스핏 슈퍼밤
+              </div>
+            </div>
+          </div>
+          
+          {/* 하단 버튼 */}
+          <div style={{ padding: '12px 16px', background: 'rgba(255,255,255,0.1)', display: 'flex', justifyContent: 'center', flexShrink: 0 }}>
+            <button onClick={handleShareOrDownload} disabled={processing} style={{ padding: '14px 40px', border: 'none', borderRadius: '12px', background: 'linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%)', color: 'white', fontWeight: '700', fontSize: '1rem', cursor: processing ? 'wait' : 'pointer', fontFamily: 'inherit', boxShadow: '0 4px 15px rgba(139, 69, 19, 0.4)' }}>
+              {processing ? '처리 중...' : '📤 공유하기'}
+            </button>
+          </div>
+        </div>
+      );
+    };
+    
+    // 컴포넌트: 눈 내림 효과
+    const SnowEffect = ({ enabled }) => {
+      const [snowflakes, setSnowflakes] = useState([]);
+      
+      useEffect(() => {
+        if (!enabled) {
+          setSnowflakes([]);
+          return;
+        }
+        
+        const createSnowflake = () => {
+          const id = Math.random().toString(36).substr(2, 9);
+          const snowChars = ['❄', '❅', '❆', '✻', '✼', '❉'];
+          return {
+            id,
+            char: snowChars[Math.floor(Math.random() * snowChars.length)],
+            left: Math.random() * 100,
+            size: Math.random() * 1.2 + 0.6,
+            duration: Math.random() * 5 + 5,
+            delay: Math.random() * 2
+          };
+        };
+        
+        // 초기 눈송이 생성
+        const initialSnow = Array.from({ length: 30 }, createSnowflake);
+        setSnowflakes(initialSnow);
+        
+        // 주기적으로 새 눈송이 추가
+        const interval = setInterval(() => {
+          setSnowflakes(prev => {
+            const filtered = prev.slice(-50); // 최대 50개 유지
+            return [...filtered, createSnowflake()];
+          });
+        }, 300);
+        
+        return () => clearInterval(interval);
+      }, [enabled]);
+      
+      if (!enabled) return null;
+      
+      return (
+        <div className="snow-container">
+          {snowflakes.map(flake => (
+            <span
+              key={flake.id}
+              className="snowflake"
+              style={{
+                left: `${flake.left}%`,
+                fontSize: `${flake.size}rem`,
+                animationDuration: `${flake.duration}s`,
+                animationDelay: `${flake.delay}s`
+              }}
+            >
+              {flake.char}
+            </span>
+          ))}
+        </div>
+      );
+    };
+    
+    // 컴포넌트: 액션 버튼들
+    const ActionButtons = ({ onReset, onCapture, onRulebookCapture, onSnowToggle, snowEnabled, assignments }) => (
+      <div style={{
+        position: 'fixed',
+        bottom: 0,
+        left: 0,
+        right: 0,
+        background: 'white',
+        padding: '12px 16px',
+        boxShadow: '0 -4px 20px rgba(0,0,0,0.1)',
+        display: 'flex',
+        gap: '8px',
+        justifyContent: 'center',
+        zIndex: 100
+      }}>
+        <button
+          onClick={onSnowToggle}
+          style={{
+            padding: '12px 14px',
+            border: snowEnabled ? '2px solid #4FC3F7' : '2px solid #ccc',
+            borderRadius: '12px',
+            background: snowEnabled ? 'rgba(79, 195, 247, 0.1)' : 'white',
+            color: snowEnabled ? '#0288D1' : '#999',
+            fontWeight: '600',
+            fontSize: '0.85rem',
+            cursor: 'pointer',
+            fontFamily: 'inherit'
+          }}
+          title="눈 내림 효과"
+        >
+          ❄️
+        </button>
+        
+        <button
+          onClick={onReset}
+          style={{
+            padding: '12px 16px',
+            border: '2px solid var(--accent-red)',
+            borderRadius: '12px',
+            background: 'white',
+            color: 'var(--accent-red)',
+            fontWeight: '600',
+            fontSize: '0.85rem',
+            cursor: 'pointer',
+            fontFamily: 'inherit'
+          }}
+        >
+          🔄 초기화
+        </button>
+        
+        <button
+          onClick={onRulebookCapture}
+          style={{
+            padding: '12px 16px',
+            border: '2px solid var(--primary)',
+            borderRadius: '12px',
+            background: 'white',
+            color: 'var(--primary)',
+            fontWeight: '600',
+            fontSize: '0.85rem',
+            cursor: 'pointer',
+            fontFamily: 'inherit'
+          }}
+        >
+          📖 룰북
+        </button>
+        
+        <button
+          onClick={onCapture}
+          style={{
+            padding: '12px 24px',
+            border: 'none',
+            borderRadius: '12px',
+            background: 'linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%)',
+            color: 'white',
+            fontWeight: '600',
+            fontSize: '0.85rem',
+            cursor: 'pointer',
+            fontFamily: 'inherit',
+            boxShadow: '0 4px 15px rgba(139, 69, 19, 0.3)'
+          }}
+        >
+          📋 배정
+        </button>
+      </div>
+    );
+    
+    // 컴포넌트: 룰북 캡쳐 뷰
+    const RulebookCaptureView = ({ onClose, eventsData }) => {
+      const captureRef = useRef(null);
+      const [processing, setProcessing] = useState(false);
+      const [scale, setScale] = useState(0.6);
+      const [columns, setColumns] = useState(2);
+      
+      const getImageBlob = async () => {
+        const captureEl = captureRef.current;
+        const originalTransform = captureEl.style.transform;
+        captureEl.style.transform = 'scale(1)';
+        await new Promise(resolve => setTimeout(resolve, 100));
+        
+        const canvas = await html2canvas(captureEl, { 
+          backgroundColor: '#FDF5E6', 
+          scale: 2,
+          windowHeight: captureEl.scrollHeight,
+          height: captureEl.scrollHeight
+        });
+        
+        captureEl.style.transform = originalTransform;
+        
+        return new Promise(resolve => {
+          canvas.toBlob(blob => resolve(blob), 'image/png');
+        });
+      };
+      
+      const handleDownload = async (blob) => {
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.download = '크로스핏슈퍼밤-와드룰북.png';
+        link.href = url;
+        link.click();
+        URL.revokeObjectURL(url);
+      };
+      
+      const handleShareOrDownload = async () => {
+        if (!captureRef.current) return;
+        setProcessing(true);
+        try {
+          const blob = await getImageBlob();
+          const file = new File([blob], '크로스핏슈퍼밤-와드룰북.png', { type: 'image/png' });
+          
+          if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+            await navigator.share({
+              title: '크로스핏 슈퍼밤 와드 룰북',
+              text: '2025 YEAR-END PARTY 와드 룰북',
+              files: [file]
+            });
+          } else {
+            await handleDownload(blob);
+          }
+        } catch (err) {
+          if (err.name === 'AbortError') {
+            // 사용자가 공유 취소
+          } else {
+            try {
+              const blob = await getImageBlob();
+              await handleDownload(blob);
+            } catch (downloadErr) {
+              console.error('저장 실패:', downloadErr);
+              alert('저장에 실패했습니다.');
+            }
+          }
+        }
+        setProcessing(false);
+      };
+      
+      const gridColumns = columns === 1 ? '1fr' : columns === 2 ? 'repeat(2, 1fr)' : 'repeat(3, 1fr)';
+      const captureWidth = columns === 1 ? '500px' : columns === 2 ? '800px' : '1100px';
+      
+      return (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.9)', zIndex: 1000, display: 'flex', flexDirection: 'column' }}>
+          {/* 상단 컨트롤 바 */}
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 16px', background: 'rgba(255,255,255,0.1)', flexWrap: 'wrap', gap: '10px', flexShrink: 0 }}>
+            <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
+              <span style={{ color: 'white', fontSize: '0.75rem' }}>열:</span>
+              {[1, 2, 3].map(col => (
+                <button key={col} onClick={() => setColumns(col)} style={{ padding: '6px 12px', border: 'none', borderRadius: '6px', background: columns === col ? 'white' : 'rgba(255,255,255,0.2)', color: columns === col ? 'var(--primary-dark)' : 'white', fontWeight: '600', fontSize: '0.8rem', cursor: 'pointer' }}>{col}</button>
+              ))}
+            </div>
+            <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
+              <button onClick={() => setScale(Math.max(0.3, scale - 0.1))} style={{ padding: '6px 14px', border: 'none', borderRadius: '6px', background: 'rgba(255,255,255,0.2)', color: 'white', fontWeight: '700', fontSize: '1rem', cursor: 'pointer' }}>−</button>
+              <span style={{ color: 'white', fontSize: '0.8rem', minWidth: '50px', textAlign: 'center' }}>{Math.round(scale * 100)}%</span>
+              <button onClick={() => setScale(Math.min(1.2, scale + 0.1))} style={{ padding: '6px 14px', border: 'none', borderRadius: '6px', background: 'rgba(255,255,255,0.2)', color: 'white', fontWeight: '700', fontSize: '1rem', cursor: 'pointer' }}>+</button>
+            </div>
+            <button onClick={onClose} style={{ padding: '6px 16px', border: '2px solid white', borderRadius: '8px', background: 'transparent', color: 'white', fontWeight: '600', cursor: 'pointer', fontFamily: 'inherit' }}>✕ 닫기</button>
+          </div>
+          
+          {/* 스크롤 가능한 미리보기 영역 */}
+          <div style={{ flex: 1, overflow: 'auto', padding: '20px', display: 'flex', justifyContent: 'center', alignItems: 'flex-start' }}>
+            <div ref={captureRef} style={{ background: 'var(--bg-cream)', padding: '24px', borderRadius: '16px', transform: 'scale(' + scale + ')', transformOrigin: 'top center', width: captureWidth, minWidth: captureWidth }}>
+              {/* 헤더 */}
+              <div style={{ textAlign: 'center', marginBottom: '24px', paddingBottom: '16px', borderBottom: '3px solid var(--primary)' }}>
+                <h2 className="title-font" style={{ color: 'var(--primary-dark)', fontSize: '1.8rem', marginBottom: '8px' }}>📖 와드 룰북</h2>
+                <p style={{ color: 'var(--primary)', fontWeight: '600', fontSize: '1rem' }}>💣 CrossFit Superbomb · 2025 YEAR-END PARTY</p>
+                <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '4px' }}>📅 12/6 (SAT) 13:00</p>
+              </div>
+              
+              {/* 룰북 내용 */}
+              <div style={{ display: 'grid', gridTemplateColumns: gridColumns, gap: '16px' }}>
+                {eventsData.map(event => (
+                  <div key={event.id} style={{ background: 'white', borderRadius: '12px', overflow: 'hidden', border: '1px solid #e0d5c7' }}>
+                    <div style={{ background: 'linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%)', padding: '12px 16px', color: 'white' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <span style={{ background: 'rgba(255,255,255,0.3)', padding: '4px 10px', borderRadius: '10px', fontSize: '0.75rem', fontWeight: '700' }}>EVENT {event.id}</span>
+                        <span className="title-font" style={{ fontSize: '1.1rem' }}>{event.name}</span>
+                      </div>
+                    </div>
+                    <div style={{ padding: '16px' }}>
+                      <div style={{ fontSize: '0.8rem', color: 'var(--text-dark)', whiteSpace: 'pre-wrap', lineHeight: '1.7' }}>
+                        {RULEBOOK[event.id]}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+          
+          {/* 하단 공유 버튼 */}
+          <div style={{ padding: '12px 16px', background: 'rgba(255,255,255,0.1)', display: 'flex', justifyContent: 'center', flexShrink: 0 }}>
+            <button onClick={handleShareOrDownload} disabled={processing} style={{ padding: '14px 40px', border: 'none', borderRadius: '12px', background: 'linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%)', color: 'white', fontWeight: '700', fontSize: '1rem', cursor: processing ? 'wait' : 'pointer', fontFamily: 'inherit', boxShadow: '0 4px 15px rgba(139, 69, 19, 0.4)' }}>
+              {processing ? '처리 중...' : '📤 공유하기'}
+            </button>
+          </div>
+        </div>
+      );
+    };
+    
+    // 컴포넌트: 캡쳐용 결과 뷰
+    const CaptureView = ({ teamKey, members, assignments, onClose, eventsData, teamCoaches, coachWod }) => {
+      const captureRef = useRef(null);
+      const [processing, setProcessing] = useState(false);
+      const [scale, setScale] = useState(0.7);
+      const [columns, setColumns] = useState(2);
+      
+      const selectedCoach = teamCoaches[teamKey];
+      const coachInfo = selectedCoach ? COACHES.find(c => c.id === selectedCoach) : null;
+      const coachWodEvent = coachWod[teamKey];
+      const teamDisplayName = coachInfo ? 'TEAM ' + selectedCoach : TEAMS_DATA[teamKey].name;
+      
+      // 여성 인원수 계산 (예지 코치 포함)
+      const femaleCount = members.female.length + (coachInfo?.gender === 'female' ? 1 : 0);
+      
+      const getAssignmentCount = (name) => {
+        let count = 0;
+        Object.values(assignments).forEach(eventAssignments => {
+          Object.values(eventAssignments).forEach(assignedName => {
+            if (assignedName === name) count++;
+          });
+        });
+        return count;
+      };
+      
+      const getImageBlob = async () => {
+        const captureEl = captureRef.current;
+        const originalTransform = captureEl.style.transform;
+        captureEl.style.transform = 'scale(1)';
+        
+        await new Promise(resolve => setTimeout(resolve, 100));
+        
+        const canvas = await html2canvas(captureEl, { 
+          backgroundColor: '#FDF5E6', 
+          scale: 2,
+          useCORS: true,
+          logging: false,
+          windowHeight: captureEl.scrollHeight,
+          height: captureEl.scrollHeight
+        });
+        
+        captureEl.style.transform = originalTransform;
+        
+        return new Promise(resolve => {
+          canvas.toBlob(blob => resolve(blob), 'image/png');
+        });
+      };
+      
+      const handleDownload = async (blob) => {
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.download = teamDisplayName.replace(' ', '-') + '-와드배정.png';
+        link.href = url;
+        link.click();
+        URL.revokeObjectURL(url);
+      };
+      
+      const handleShareOrDownload = async () => {
+        if (!captureRef.current) return;
+        setProcessing(true);
+        try {
+          const blob = await getImageBlob();
+          const file = new File([blob], teamDisplayName.replace(' ', '-') + '-와드배정.png', { type: 'image/png' });
+          
+          if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+            await navigator.share({
+              title: teamDisplayName + ' 와드 배정',
+              text: '크로스핏 슈퍼밤 와드 배정표',
+              files: [file]
+            });
+          } else {
+            await handleDownload(blob);
+          }
+        } catch (err) {
+          if (err.name === 'AbortError') {
+            // 사용자가 공유 취소
+          } else {
+            try {
+              const blob = await getImageBlob();
+              await handleDownload(blob);
+            } catch (downloadErr) {
+              console.error('저장 실패:', downloadErr);
+              alert('저장에 실패했습니다.');
+            }
+          }
+        }
+        setProcessing(false);
+      };
+      
+      const gridColumns = columns === 1 ? '1fr' : columns === 2 ? 'repeat(2, 1fr)' : 'repeat(3, 1fr)';
+      const captureWidth = columns === 1 ? '400px' : columns === 2 ? '650px' : '900px';
+      
+      return (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.9)', zIndex: 1000, display: 'flex', flexDirection: 'column' }}>
+          {/* 상단 컨트롤 바 */}
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 16px', background: 'rgba(255,255,255,0.1)', flexWrap: 'wrap', gap: '10px', flexShrink: 0 }}>
+            <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
+              <span style={{ color: 'white', fontSize: '0.75rem' }}>열:</span>
+              {[1, 2, 3].map(col => (
+                <button key={col} onClick={() => setColumns(col)} style={{ padding: '6px 12px', border: 'none', borderRadius: '6px', background: columns === col ? 'white' : 'rgba(255,255,255,0.2)', color: columns === col ? 'var(--primary-dark)' : 'white', fontWeight: '600', fontSize: '0.8rem', cursor: 'pointer' }}>{col}</button>
+              ))}
+            </div>
+            <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
+              <button onClick={() => setScale(Math.max(0.4, scale - 0.1))} style={{ padding: '6px 14px', border: 'none', borderRadius: '6px', background: 'rgba(255,255,255,0.2)', color: 'white', fontWeight: '700', fontSize: '1rem', cursor: 'pointer' }}>−</button>
+              <span style={{ color: 'white', fontSize: '0.8rem', minWidth: '50px', textAlign: 'center' }}>{Math.round(scale * 100)}%</span>
+              <button onClick={() => setScale(Math.min(1.2, scale + 0.1))} style={{ padding: '6px 14px', border: 'none', borderRadius: '6px', background: 'rgba(255,255,255,0.2)', color: 'white', fontWeight: '700', fontSize: '1rem', cursor: 'pointer' }}>+</button>
+            </div>
+            <button onClick={onClose} style={{ padding: '6px 16px', border: '2px solid white', borderRadius: '8px', background: 'transparent', color: 'white', fontWeight: '600', cursor: 'pointer', fontFamily: 'inherit' }}>✕ 닫기</button>
+          </div>
+          
+          {/* 스크롤 가능한 미리보기 영역 */}
+          <div style={{ flex: 1, overflow: 'auto', padding: '20px', display: 'flex', justifyContent: 'center', alignItems: 'flex-start' }}>
+            <div ref={captureRef} style={{ background: 'var(--bg-cream)', padding: '20px', borderRadius: '16px', transform: 'scale(' + scale + ')', transformOrigin: 'top center', width: captureWidth, minWidth: captureWidth }}>
+              {/* 헤더 */}
+              <div style={{ textAlign: 'center', marginBottom: '20px', paddingBottom: '16px', borderBottom: '2px solid var(--primary)' }}>
+                <h2 className="title-font" style={{ color: 'var(--primary-dark)', fontSize: '1.5rem' }}>💣 CrossFit Superbomb</h2>
+                <p style={{ color: 'var(--primary)', fontWeight: '600', fontSize: '1rem' }}>2025 YEAR-END PARTY</p>
+                <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '2px', marginBottom: '8px' }}>📅 12/6 (SAT) 13:00</p>
+                <p style={{ color: 'var(--primary)', fontWeight: '600', fontSize: '1.1rem' }}>{teamDisplayName}</p>
+                <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '4px' }}>
+                  {coachInfo && ('👑 ' + coachInfo.name + ' 코치 · ')}
+                  남 {members.male.length}명 / 여 {members.female.length}명{coachInfo?.gender === 'female' ? '+1' : ''}
+                  {femaleCount >= 7 ? ' (여성 7인팀)' : ' (여성 6인팀)'}
+                </p>
+              </div>
+              
+              {/* 이벤트 그리드 */}
+              <div style={{ display: 'grid', gridTemplateColumns: gridColumns, gap: '10px' }}>
+                {eventsData.map(event => {
+                  const eventAssignments = assignments[event.id] || {};
+                  const hasAssignments = Object.values(eventAssignments).some(v => v);
+                  const isCoachEvent = coachWodEvent === event.id;
+                  if (!hasAssignments && !isCoachEvent) return null;
+                  
+                  return (
+                    <div key={event.id} style={{ background: 'white', borderRadius: '10px', overflow: 'hidden', border: isCoachEvent ? '2px solid #E65100' : '1px solid #e0d5c7' }}>
+                      <div style={{ background: isCoachEvent ? 'linear-gradient(135deg, #E65100 0%, #FF8C00 100%)' : 'linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%)', padding: '8px 10px', color: 'white' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                          <span style={{ background: 'rgba(255,255,255,0.25)', padding: '2px 8px', borderRadius: '8px', fontSize: '0.65rem', fontWeight: '700' }}>E{event.id}</span>
+                          <span style={{ fontWeight: '700', fontSize: '0.8rem' }}>{event.name}</span>
+                          {isCoachEvent && <span style={{ marginLeft: 'auto', fontSize: '0.65rem' }}>👑</span>}
+                        </div>
+                        <div style={{ fontSize: '0.55rem', opacity: 0.9, marginTop: '4px' }}>{event.description}</div>
+                      </div>
+                      <div style={{ padding: '8px' }}>
+                        {/* 슬롯 순서대로 표시 (코치 포함) */}
+                        {event.slots.map(slot => {
+                          const assigned = eventAssignments[slot.id];
+                          if (!assigned) return null;
+                          
+                          const isCoachSlot = assigned.includes('코치');
+                          const slotColor = isCoachSlot ? '#E65100' : slot.gender === 'male' ? '#1565C0' : slot.gender === 'female' ? '#C2185B' : '#9C27B0';
+                          const slotBg = isCoachSlot ? 'rgba(230, 81, 0, 0.15)' : slot.gender === 'male' ? 'rgba(21, 101, 192, 0.08)' : slot.gender === 'female' ? 'rgba(194, 24, 91, 0.08)' : 'rgba(156, 39, 176, 0.08)';
+                          return (
+                            <div key={slot.id} style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '5px 8px', marginBottom: '4px', background: slotBg, borderRadius: '6px', borderLeft: '3px solid ' + slotColor }}>
+                              <span style={{ fontWeight: '700', fontSize: '0.7rem', color: slotColor, minWidth: '28px' }}>{slot.label}{isCoachSlot && ' 👑'}</span>
+                              <span style={{ fontWeight: '600', fontSize: '0.75rem', color: isCoachSlot ? '#E65100' : 'var(--primary-dark)', minWidth: '45px' }}>{assigned}</span>
+                              <span style={{ fontSize: '0.6rem', color: isCoachSlot ? '#E65100' : 'var(--text-muted)', flex: 1, textAlign: 'right' }}>{slot.action}</span>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+              
+              {/* 멤버별 참여 현황 */}
+              <div style={{ marginTop: '20px', paddingTop: '16px', borderTop: '2px solid var(--primary)' }}>
+                <div style={{ fontSize: '0.8rem', fontWeight: '600', color: 'var(--primary-dark)', marginBottom: '10px' }}>📊 멤버별 참여 현황</div>
+                
+                {/* 코치 */}
+                {coachInfo && (
+                  <div style={{ marginBottom: '10px' }}>
+                    <div style={{ fontSize: '0.7rem', color: '#E65100', fontWeight: '600', marginBottom: '6px' }}>👑 코치</div>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
+                      {(() => {
+                        const coachCount = coachWodEvent ? 1 : 0;
+                        const statusColor = coachCount === 1 ? 'var(--success)' : 'var(--warning)';
+                        const statusBg = coachCount === 1 ? 'rgba(34, 139, 34, 0.15)' : 'rgba(255, 140, 0, 0.15)';
+                        return <span style={{ padding: '3px 6px', borderRadius: '4px', fontSize: '0.7rem', background: statusBg, color: statusColor, border: '1px solid ' + statusColor }}>{coachInfo.name} 코치 ({coachCount}/1)</span>;
+                      })()}
+                    </div>
+                  </div>
+                )}
+                
+                <div style={{ marginBottom: '10px' }}>
+                  <div style={{ fontSize: '0.7rem', color: '#1565C0', fontWeight: '600', marginBottom: '6px' }}>🚹 남자 ({members.male.length}명)</div>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
+                    {members.male.map(name => {
+                      const count = getAssignmentCount(name);
+                      const statusColor = count === 2 ? 'var(--success)' : count > 2 ? 'var(--accent-red)' : 'var(--warning)';
+                      const statusBg = count === 2 ? 'rgba(34, 139, 34, 0.15)' : count > 2 ? 'rgba(196, 30, 58, 0.15)' : 'rgba(255, 140, 0, 0.15)';
+                      return <span key={name} style={{ padding: '3px 6px', borderRadius: '4px', fontSize: '0.7rem', background: statusBg, color: statusColor, border: '1px solid ' + statusColor }}>{name} ({count}/2)</span>;
+                    })}
+                  </div>
+                </div>
+                <div>
+                  <div style={{ fontSize: '0.7rem', color: '#C2185B', fontWeight: '600', marginBottom: '6px' }}>🚺 여자 ({members.female.length}명)</div>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
+                    {members.female.map(name => {
+                      const count = getAssignmentCount(name);
+                      const statusColor = count === 2 ? 'var(--success)' : count > 2 ? 'var(--accent-red)' : 'var(--warning)';
+                      const statusBg = count === 2 ? 'rgba(34, 139, 34, 0.15)' : count > 2 ? 'rgba(196, 30, 58, 0.15)' : 'rgba(255, 140, 0, 0.15)';
+                      return <span key={name} style={{ padding: '3px 6px', borderRadius: '4px', fontSize: '0.7rem', background: statusBg, color: statusColor, border: '1px solid ' + statusColor }}>{name} ({count}/2)</span>;
+                    })}
+                  </div>
+                </div>
+              </div>
+              
+              {/* 멤버별 와드 상세 */}
+              <div style={{ marginTop: '16px', paddingTop: '16px', borderTop: '1px dashed var(--primary-light)' }}>
+                <div style={{ fontSize: '0.8rem', fontWeight: '600', color: 'var(--primary-dark)', marginBottom: '10px' }}>🎯 멤버별 와드 상세</div>
+                
+                {/* 코치 - 최상위 */}
+                {coachInfo && coachWodEvent && (
+                  <div style={{ marginBottom: '12px' }}>
+                    <div style={{ fontSize: '0.7rem', color: '#E65100', fontWeight: '600', marginBottom: '6px' }}>👑 코치</div>
+                    <div style={{ display: 'grid', gridTemplateColumns: gridColumns, gap: '4px' }}>
+                      {(() => {
+                        // 코치가 배정된 슬롯 찾기
+                        const coachEvent = eventsData.find(e => e.id === coachWodEvent);
+                        const coachSlotId = Object.entries(assignments[coachWodEvent] || {}).find(([id, name]) => name && name.includes('코치'))?.[0];
+                        const coachSlot = coachSlotId ? coachEvent?.slots.find(s => s.id === coachSlotId) : null;
+                        
+                        return (
+                          <div style={{ background: 'rgba(230, 81, 0, 0.08)', padding: '6px 8px', borderRadius: '6px', borderLeft: '2px solid #E65100' }}>
+                            <div style={{ fontWeight: '600', fontSize: '0.7rem', color: '#E65100', marginBottom: '3px' }}>{coachInfo.name} 코치</div>
+                            <div style={{ fontSize: '0.6rem', color: 'var(--text-muted)', lineHeight: '1.3' }}>
+                              E{coachWodEvent}: {coachSlot ? coachSlot.action : coachEvent?.name}
+                            </div>
+                          </div>
+                        );
+                      })()}
+                    </div>
+                  </div>
+                )}
+                
+                <div style={{ marginBottom: '12px' }}>
+                  <div style={{ fontSize: '0.7rem', color: '#1565C0', fontWeight: '600', marginBottom: '6px' }}>🚹 남자</div>
+                  <div style={{ display: 'grid', gridTemplateColumns: gridColumns, gap: '4px' }}>
+                    {members.male.map(name => {
+                      const memberWods = [];
+                      eventsData.forEach(event => {
+                        const ea = assignments[event.id] || {};
+                        Object.entries(ea).forEach(([slotId, an]) => {
+                          if (an === name) {
+                            const slot = event.slots.find(s => s.id === slotId);
+                            memberWods.push({ eventId: event.id, action: slot?.action || '' });
+                          }
+                        });
+                      });
+                      if (memberWods.length === 0) return null;
+                      return (
+                        <div key={name} style={{ background: 'rgba(21, 101, 192, 0.05)', padding: '6px 8px', borderRadius: '6px', borderLeft: '2px solid #1565C0' }}>
+                          <div style={{ fontWeight: '600', fontSize: '0.7rem', color: '#1565C0', marginBottom: '3px' }}>{name}</div>
+                          {memberWods.map((wod, idx) => <div key={idx} style={{ fontSize: '0.6rem', color: 'var(--text-muted)', lineHeight: '1.3' }}>E{wod.eventId}: {wod.action}</div>)}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+                <div>
+                  <div style={{ fontSize: '0.7rem', color: '#C2185B', fontWeight: '600', marginBottom: '6px' }}>🚺 여자</div>
+                  <div style={{ display: 'grid', gridTemplateColumns: gridColumns, gap: '4px' }}>
+                    {members.female.map(name => {
+                      const memberWods = [];
+                      eventsData.forEach(event => {
+                        const ea = assignments[event.id] || {};
+                        Object.entries(ea).forEach(([slotId, an]) => {
+                          if (an === name) {
+                            const slot = event.slots.find(s => s.id === slotId);
+                            memberWods.push({ eventId: event.id, action: slot?.action || '' });
+                          }
+                        });
+                      });
+                      if (memberWods.length === 0) return null;
+                      return (
+                        <div key={name} style={{ background: 'rgba(194, 24, 91, 0.05)', padding: '6px 8px', borderRadius: '6px', borderLeft: '2px solid #C2185B' }}>
+                          <div style={{ fontWeight: '600', fontSize: '0.7rem', color: '#C2185B', marginBottom: '3px' }}>{name}</div>
+                          {memberWods.map((wod, idx) => <div key={idx} style={{ fontSize: '0.6rem', color: 'var(--text-muted)', lineHeight: '1.3' }}>E{wod.eventId}: {wod.action}</div>)}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          {/* 하단 공유 버튼 */}
+          <div style={{ padding: '12px 16px', background: 'rgba(255,255,255,0.1)', display: 'flex', justifyContent: 'center', flexShrink: 0 }}>
+            <button onClick={handleShareOrDownload} disabled={processing} style={{ padding: '14px 40px', border: 'none', borderRadius: '12px', background: 'linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%)', color: 'white', fontWeight: '700', fontSize: '1rem', cursor: processing ? 'wait' : 'pointer', fontFamily: 'inherit', boxShadow: '0 4px 15px rgba(139, 69, 19, 0.4)' }}>
+              {processing ? '처리 중...' : '📤 공유하기'}
+            </button>
+          </div>
+        </div>
+      );
+    };
+    
+    const App = () => {
+      const [selectedTeam, setSelectedTeam] = useState('D');
+      const [assignments, setAssignments] = useState({});
+      const [teamCoaches, setTeamCoaches] = useState({});
+      const [coachWod, setCoachWod] = useState({});
+      const [memberListExpanded, setMemberListExpanded] = useState(false);
+      const [animatingSlot, setAnimatingSlot] = useState(null);
+      const [showCapture, setShowCapture] = useState(false);
+      const [showRulebookCapture, setShowRulebookCapture] = useState(false);
+      const [snowEnabled, setSnowEnabled] = useState(false);
+      
+      const members = TEAMS_DATA[selectedTeam];
+      
+      // 현재 팀의 코치 정보
+      const selectedCoach = teamCoaches[selectedTeam];
+      const coachInfo = selectedCoach ? COACHES.find(c => c.id === selectedCoach) : null;
+      
+      // 팀 표시명
+      const teamDisplayName = coachInfo ? `TEAM-${selectedCoach}` : `TEAM-${selectedTeam}`;
+      
+      // 여성 인원수 계산 (예지 코치가 배정된 경우 +1)
+      const femaleCount = members.female.length + (coachInfo?.gender === 'female' ? 1 : 0);
+      const eventsData = getEventsData(femaleCount);
+      
+      // 로컬스토리지에서 불러오기
+      useEffect(() => {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) {
+          try {
+            const parsed = JSON.parse(saved);
+            setAssignments(parsed);
+          } catch (e) {
+            console.error('저장된 데이터 파싱 실패:', e);
+          }
+        }
+        
+        const savedCoaches = localStorage.getItem(COACH_STORAGE_KEY);
+        if (savedCoaches) {
+          try {
+            const parsed = JSON.parse(savedCoaches);
+            setTeamCoaches(parsed.coaches || {});
+            setCoachWod(parsed.wod || {});
+          } catch (e) {
+            console.error('코치 데이터 파싱 실패:', e);
+          }
+        }
+      }, []);
+      
+      // 로컬스토리지에 저장
+      useEffect(() => {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(assignments));
+      }, [assignments]);
+      
+      useEffect(() => {
+        localStorage.setItem(COACH_STORAGE_KEY, JSON.stringify({
+          coaches: teamCoaches,
+          wod: coachWod
+        }));
+      }, [teamCoaches, coachWod]);
+      
+      const currentTeamAssignments = assignments[selectedTeam] || {};
+      
+      const handleAssign = (eventId, slotId, memberName) => {
+        setAnimatingSlot(`${eventId}-${slotId}`);
+        setTimeout(() => setAnimatingSlot(null), 300);
+        
+        setAssignments(prev => ({
+          ...prev,
+          [selectedTeam]: {
+            ...(prev[selectedTeam] || {}),
+            [eventId]: {
+              ...((prev[selectedTeam] || {})[eventId] || {}),
+              [slotId]: memberName
+            }
+          }
+        }));
+      };
+      
+      const handleCoachChange = (teamKey, coachId) => {
+        setTeamCoaches(prev => ({
+          ...prev,
+          [teamKey]: coachId
+        }));
+        // 코치 변경 시 와드도 초기화
+        if (!coachId) {
+          setCoachWod(prev => ({
+            ...prev,
+            [teamKey]: null
+          }));
+        }
+      };
+      
+      const handleCoachWodChange = (teamKey, eventId) => {
+        const prevEventId = coachWod[teamKey];
+        const coachId = teamCoaches[teamKey];
+        const coachInfo = coachId ? COACHES.find(c => c.id === coachId) : null;
+        
+        // 이전 와드에서 코치 배정 제거
+        if (prevEventId && coachInfo) {
+          setAssignments(prev => {
+            const teamAssignments = prev[teamKey] || {};
+            const prevEventAssignments = teamAssignments[prevEventId] || {};
+            
+            // 코치가 배정된 슬롯 찾아서 제거
+            const newPrevEventAssignments = {};
+            Object.entries(prevEventAssignments).forEach(([slotId, name]) => {
+              if (name && !name.includes('코치')) {
+                newPrevEventAssignments[slotId] = name;
+              }
+            });
+            
+            return {
+              ...prev,
+              [teamKey]: {
+                ...teamAssignments,
+                [prevEventId]: newPrevEventAssignments
+              }
+            };
+          });
+        }
+        
+        setCoachWod(prev => ({
+          ...prev,
+          [teamKey]: eventId
+        }));
+      };
+      
+      const handleReset = () => {
+        if (confirm(`${TEAMS_DATA[selectedTeam].name}의 모든 배정을 초기화하시겠습니까? (코치 포함)`)) {
+          setAssignments(prev => ({
+            ...prev,
+            [selectedTeam]: {}
+          }));
+          setTeamCoaches(prev => ({
+            ...prev,
+            [selectedTeam]: null
+          }));
+          setCoachWod(prev => ({
+            ...prev,
+            [selectedTeam]: null
+          }));
+        }
+      };
+      
+      const handleResetEvent = (eventId) => {
+        if (confirm(`EVENT ${eventId}의 배정을 초기화하시겠습니까?`)) {
+          setAssignments(prev => ({
+            ...prev,
+            [selectedTeam]: {
+              ...(prev[selectedTeam] || {}),
+              [eventId]: {}
+            }
+          }));
+        }
+      };
+      
+      const handleTeamChange = (teamKey) => {
+        setSelectedTeam(teamKey);
+      };
+      
+      return (
+        <div style={{ paddingBottom: '80px' }}>
+          <Header 
+            selectedTeam={selectedTeam} 
+            onTeamChange={handleTeamChange}
+            teamCoaches={teamCoaches}
+            onCoachChange={handleCoachChange}
+          />
+          
+          {/* 코치 배정 섹션 */}
+          <CoachSection
+            teamKey={selectedTeam}
+            teamCoaches={teamCoaches}
+            onCoachChange={handleCoachChange}
+            coachWod={coachWod}
+            onCoachWodChange={handleCoachWodChange}
+            eventsData={eventsData}
+            assignments={currentTeamAssignments}
+          />
+          
+          {/* 팀 구성 안내 */}
+          <div style={{
+            margin: '16px 16px 0',
+            padding: '10px 14px',
+            background: femaleCount >= 7 
+              ? 'rgba(194, 24, 91, 0.1)' 
+              : 'rgba(21, 101, 192, 0.1)',
+            borderRadius: '10px',
+            border: `1px solid ${femaleCount >= 7 ? 'rgba(194, 24, 91, 0.3)' : 'rgba(21, 101, 192, 0.3)'}`,
+            fontSize: '0.85rem',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px'
+          }}>
+            <span style={{ fontSize: '1.1rem' }}>
+              {femaleCount >= 7 ? '👩' : '👨'}
+            </span>
+            <span>
+              <strong>남 {members.male.length}명 / 여 {members.female.length}명</strong>
+              {coachInfo && <span> + {coachInfo.name} 코치({coachInfo.gender === 'female' ? '여' : '남'})</span>}
+              {' → '}
+              <span style={{ 
+                color: femaleCount >= 7 ? '#C2185B' : '#1565C0',
+                fontWeight: '600'
+              }}>
+                {femaleCount >= 7 ? '여성 7인팀 규칙 적용' : '여성 6인팀 규칙 적용'}
+              </span>
+            </span>
+          </div>
+          
+          <MemberStatus 
+            members={members}
+            assignments={currentTeamAssignments}
+            teamKey={selectedTeam}
+            eventsData={eventsData}
+            teamCoaches={teamCoaches}
+            coachWod={coachWod}
+          />
+          
+          <MemberList 
+            members={members}
+            assignments={currentTeamAssignments}
+            expanded={memberListExpanded}
+            onToggle={() => setMemberListExpanded(!memberListExpanded)}
+            eventsData={eventsData}
+            teamCoaches={teamCoaches}
+            teamKey={selectedTeam}
+            coachWod={coachWod}
+          />
+          
+          <div style={{ 
+            padding: '0 16px 8px',
+            fontSize: '0.85rem',
+            color: 'var(--primary-dark)',
+            fontWeight: '600'
+          }}>
+            🎯 이벤트별 배정
+          </div>
+          
+          {eventsData.map(event => (
+            <EventCard
+              key={event.id}
+              event={event}
+              members={members}
+              assignments={currentTeamAssignments}
+              onAssign={handleAssign}
+              onResetEvent={handleResetEvent}
+              animatingSlot={animatingSlot}
+              coachWodEvent={coachWod[selectedTeam]}
+              coachInfo={coachInfo}
+              teamDisplayName={teamDisplayName}
+              femaleCount={femaleCount}
+            />
+          ))}
+          
+          <ActionButtons 
+            onReset={handleReset}
+            onCapture={() => setShowCapture(true)}
+            onRulebookCapture={() => setShowRulebookCapture(true)}
+            onSnowToggle={() => setSnowEnabled(!snowEnabled)}
+            snowEnabled={snowEnabled}
+            assignments={currentTeamAssignments}
+          />
+          
+          <SnowEffect enabled={snowEnabled} />
+          
+          {showCapture && (
+            <CaptureView
+              teamKey={selectedTeam}
+              members={members}
+              assignments={currentTeamAssignments}
+              onClose={() => setShowCapture(false)}
+              eventsData={eventsData}
+              teamCoaches={teamCoaches}
+              coachWod={coachWod}
+            />
+          )}
+          
+          {showRulebookCapture && (
+            <RulebookCaptureView
+              onClose={() => setShowRulebookCapture(false)}
+              eventsData={eventsData}
+            />
+          )}
+        </div>
+      );
+    };
+    
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
+</body>
+</html>
