@@ -1718,6 +1718,121 @@ AMRAP 3MIN
         </button>
       </div>
     );
+
+    
+    // Footer 컴포넌트
+    const Footer = () => {
+      return (
+        <div style={{
+          marginTop: '40px',
+          padding: '24px 16px',
+          background: 'linear-gradient(to top, var(--bg-card), transparent)',
+          borderTop: '1px solid rgba(139, 69, 19, 0.1)',
+          textAlign: 'center'
+        }}>
+          {/* 로고 또는 타이틀 */}
+          <div style={{
+            fontSize: '1.2rem',
+            fontWeight: '700',
+            color: 'var(--primary-dark)',
+            marginBottom: '12px',
+            fontFamily: "'Black Han Sans', sans-serif"
+          }}>
+            CrossFit Superbomb
+          </div>
+          
+          {/* 소셜 링크 */}
+          <div style={{
+            display: 'flex',
+            justifyContent: 'center',
+            gap: '16px',
+            marginBottom: '16px'
+          }}>
+            <a 
+              href="https://www.instagram.com/crossfitsuperbomb" 
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                padding: '8px 16px',
+                background: 'linear-gradient(135deg, #833AB4, #C13584, #E1306C, #FD1D1D)',
+                color: 'white',
+                textDecoration: 'none',
+                borderRadius: '20px',
+                fontSize: '0.9rem',
+                fontWeight: '500',
+                transition: 'transform 0.2s',
+                boxShadow: '0 2px 8px rgba(193, 53, 132, 0.3)'
+              }}
+              onMouseOver={(e) => e.currentTarget.style.transform = 'translateY(-2px)'}
+              onMouseOut={(e) => e.currentTarget.style.transform = 'translateY(0)'}
+            >
+              <span style={{ fontSize: '1.2rem' }}>📷</span>
+              Instagram
+            </a>
+            
+            <a 
+              href="https://github.com/ssssccccchhhhh/2025-year-end-party" 
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                padding: '8px 16px',
+                background: '#24292e',
+                color: 'white',
+                textDecoration: 'none',
+                borderRadius: '20px',
+                fontSize: '0.9rem',
+                fontWeight: '500',
+                transition: 'transform 0.2s',
+                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.2)'
+              }}
+              onMouseOver={(e) => e.currentTarget.style.transform = 'translateY(-2px)'}
+              onMouseOut={(e) => e.currentTarget.style.transform = 'translateY(0)'}
+            >
+              <span style={{ fontSize: '1.2rem' }}>💻</span>
+              GitHub
+            </a>
+          </div>
+          
+          {/* 구분선 */}
+          <div style={{
+            width: '60px',
+            height: '2px',
+            background: 'var(--accent-gold)',
+            margin: '16px auto'
+          }}></div>
+          
+          {/* 하단 텍스트 */}
+          <div style={{
+            fontSize: '0.85rem',
+            color: 'var(--text-muted)',
+            lineHeight: '1.6'
+          }}>
+            <div style={{ marginBottom: '4px' }}>
+              2025 Year-End Party Event Assignment System
+            </div>
+            <div style={{ fontSize: '0.8rem', opacity: 0.7 }}>
+              🤖 Built with AI (Claude) • Made with ❤️
+            </div>
+          </div>
+          
+          {/* 저작권 */}
+          <div style={{
+            marginTop: '12px',
+            fontSize: '0.75rem',
+            color: 'var(--text-muted)',
+            opacity: 0.6
+          }}>
+            © 2025 CrossFit Superbomb. All rights reserved.
+          </div>
+        </div>
+      );
+    };
     
     // 컴포넌트: 룰북 캡쳐 뷰
     const RulebookCaptureView = ({ onClose, eventsData }) => {
@@ -2412,6 +2527,8 @@ AMRAP 3MIN
             snowEnabled={snowEnabled}
             assignments={currentTeamAssignments}
           />
+
+          <Footer />
           
           <SnowEffect enabled={snowEnabled} />
           
