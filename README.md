@@ -9,7 +9,7 @@
 ### Event 1 - Mad Max 💨
 - **AMRAP 3min**: 15 Sync Burpee Box Jump + Max Cal Row/Ski/Bike
 - **참가 인원**: 여자 3명 (3분) + 남자 3명 (3분) = 총 6명
-- **포맷**: 여자팀 먼저 3분, 1분 브레이크, 남자팀 3분
+- **포맷**: 여자 그룹 먼저 3분, 1분 브레이크, 남자 그룹 3분
 
 ### Event 2 - Triple Lift 🏋️
 - **종목**: 1RM Hang Snatch, 1RM Hang Clean, Max Thruster
@@ -28,7 +28,7 @@
 
 ### Event 5 - Tug of Sled ⚔️
 - **종목**: 1330파운드(605kg) Sled Pull
-- **참가 인원**: 팀 전체 (팀 대항전)
+- **참가 인원**: 남자 3명
 - **포맷**: 2분 동안 최대한 멀리 끌고 가기
 
 ### Event 6 - Road to Strength 💪
