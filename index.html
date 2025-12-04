@@ -1850,7 +1850,7 @@ AMRAP 3MIN
       const captureRef = useRef(null);
       const [processing, setProcessing] = useState(false);
       const [scale, setScale] = useState(0.6);
-      const [columns, setColumns] = useState(2);
+      const [columns, setColumns] = useState(1);
       
       const getImageBlob = async () => {
         const captureEl = captureRef.current;
@@ -2284,7 +2284,7 @@ AMRAP 3MIN
       const [animatingSlot, setAnimatingSlot] = useState(null);
       const [showCapture, setShowCapture] = useState(false);
       const [showRulebookCapture, setShowRulebookCapture] = useState(false);
-      const [snowEnabled, setSnowEnabled] = useState(true);
+      const [snowEnabled, setSnowEnabled] = useState(false);
       
       const members = TEAMS_DATA[selectedTeam];
       
