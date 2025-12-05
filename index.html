@@ -402,6 +402,78 @@ AMRAP 3MIN
     const STORAGE_KEY = 'crossfit-superbam-assignments';
     const COACH_STORAGE_KEY = 'crossfit-superbam-coaches';
     
+    // URL 쿼리 파라미터 유틸리티 함수
+    const parseQueryParams = () => {
+      const params = new URLSearchParams(window.location.search);
+      const result = {
+        selectedTeam: null,
+        teamCoaches: {},
+        coachWod: {},
+        female7Option: {},
+        assignments: {}
+      };
+      
+      // 선택된 팀
+      const team = params.get('team');
+      if (team && ['D', 'C', 'B', 'A'].includes(team)) {
+        result.selectedTeam = team;
+      }
+      
+      // 각 팀별 코치, 와드, 여성7인옵션 파싱
+      ['D', 'C', 'B', 'A'].forEach(t => {
+        const coach = params.get(`coach_${t}`);
+        if (coach) result.teamCoaches[t] = coach;
+        
+        const wod = params.get(`wod_${t}`);
+        if (wod) result.coachWod[t] = parseInt(wod, 10);
+        
+        const f7 = params.get(`f7_${t}`);
+        if (f7) result.female7Option[t] = f7;
+      });
+      
+      // 멤버 배정 파싱: assign_{팀}_{이벤트}_{슬롯}=이름
+      params.forEach((value, key) => {
+        const match = key.match(/^assign_([DCBA])_(\d+)_(.+)$/);
+        if (match) {
+          const [, t, eventId, slotId] = match;
+          if (!result.assignments[t]) result.assignments[t] = {};
+          if (!result.assignments[t][eventId]) result.assignments[t][eventId] = {};
+          result.assignments[t][eventId][slotId] = decodeURIComponent(value);
+        }
+      });
+      
+      return result;
+    };
+    
+    const buildQueryString = (selectedTeam, teamCoaches, coachWod, female7Option, assignments) => {
+      const params = new URLSearchParams();
+      
+      // 선택된 팀
+      if (selectedTeam) {
+        params.set('team', selectedTeam);
+      }
+      
+      // 각 팀별 코치, 와드, 여성7인옵션
+      ['D', 'C', 'B', 'A'].forEach(t => {
+        if (teamCoaches[t]) params.set(`coach_${t}`, teamCoaches[t]);
+        if (coachWod[t]) params.set(`wod_${t}`, coachWod[t]);
+        if (female7Option[t]) params.set(`f7_${t}`, female7Option[t]);
+      });
+      
+      // 멤버 배정
+      Object.entries(assignments).forEach(([teamKey, teamAssign]) => {
+        Object.entries(teamAssign).forEach(([eventId, eventAssign]) => {
+          Object.entries(eventAssign).forEach(([slotId, memberName]) => {
+            if (memberName) {
+              params.set(`assign_${teamKey}_${eventId}_${slotId}`, memberName);
+            }
+          });
+        });
+      });
+      
+      return params.toString();
+    };
+    
     // 컴포넌트: 헤더
     const Header = ({ selectedTeam, onTeamChange, teamCoaches, onCoachChange }) => {
       const team = TEAMS_DATA[selectedTeam];
@@ -1636,7 +1708,7 @@ AMRAP 3MIN
     };
     
     // 컴포넌트: 액션 버튼들
-    const ActionButtons = ({ onReset, onCapture, onRulebookCapture, onSnowToggle, snowEnabled, assignments }) => (
+    const ActionButtons = ({ onReset, onCapture, onRulebookCapture, onSnowToggle, onCopyUrl, snowEnabled, assignments }) => (
       <div style={{
         position: 'fixed',
         bottom: 0,
@@ -1683,6 +1755,24 @@ AMRAP 3MIN
           }}
         >
           🔄 초기화
+        </button>
+        
+        <button
+          onClick={onCopyUrl}
+          style={{
+            padding: '12px 16px',
+            border: '2px solid #2196F3',
+            borderRadius: '12px',
+            background: 'white',
+            color: '#2196F3',
+            fontWeight: '600',
+            fontSize: '0.85rem',
+            cursor: 'pointer',
+            fontFamily: 'inherit'
+          }}
+          title="현재 상태 URL 복사"
+        >
+          🔗 URL 복사
         </button>
         
         <button
@@ -2289,11 +2379,57 @@ AMRAP 3MIN
     };
     
     const App = () => {
-      const [selectedTeam, setSelectedTeam] = useState('D');
-      const [assignments, setAssignments] = useState({});
-      const [teamCoaches, setTeamCoaches] = useState({});
-      const [coachWod, setCoachWod] = useState({});
-      const [female7Option, setFemale7Option] = useState({}); // 팀별 여성7인 규칙 옵션
+      // URL 파라미터 또는 localStorage에서 초기 상태 로드
+      const getInitialState = () => {
+        const urlState = parseQueryParams();
+        const hasUrlParams = window.location.search.length > 1;
+        
+        if (hasUrlParams) {
+          // URL 파라미터가 있으면 우선 사용
+          return {
+            selectedTeam: urlState.selectedTeam || 'D',
+            assignments: Object.keys(urlState.assignments).length > 0 ? urlState.assignments : {},
+            teamCoaches: urlState.teamCoaches,
+            coachWod: urlState.coachWod,
+            female7Option: urlState.female7Option
+          };
+        }
+        
+        // URL 파라미터가 없으면 localStorage에서 로드
+        let assignments = {};
+        let teamCoaches = {};
+        let coachWod = {};
+        let female7Option = {};
+        
+        try {
+          const saved = localStorage.getItem(STORAGE_KEY);
+          if (saved) assignments = JSON.parse(saved);
+        } catch (e) {
+          console.error('저장된 데이터 파싱 실패:', e);
+        }
+        
+        try {
+          const savedCoaches = localStorage.getItem(COACH_STORAGE_KEY);
+          if (savedCoaches) {
+            const parsed = JSON.parse(savedCoaches);
+            teamCoaches = parsed.coaches || {};
+            coachWod = parsed.wod || {};
+            female7Option = parsed.female7Option || {};
+          }
+        } catch (e) {
+          console.error('코치 데이터 파싱 실패:', e);
+        }
+        
+        return { selectedTeam: 'D', assignments, teamCoaches, coachWod, female7Option };
+      };
+      
+      const initialState = getInitialState();
+      
+      const [selectedTeam, setSelectedTeam] = useState(initialState.selectedTeam);
+      const [assignments, setAssignments] = useState(initialState.assignments);
+      const [teamCoaches, setTeamCoaches] = useState(initialState.teamCoaches);
+      const [coachWod, setCoachWod] = useState(initialState.coachWod);
+      const [female7Option, setFemale7Option] = useState(initialState.female7Option); // 팀별 여성7인 규칙 옵션
       const [memberListExpanded, setMemberListExpanded] = useState(false);
       const [animatingSlot, setAnimatingSlot] = useState(null);
       const [showCapture, setShowCapture] = useState(false);
@@ -2314,31 +2450,6 @@ AMRAP 3MIN
       const currentFemale7Option = female7Option[selectedTeam] || 'both';
       const eventsData = getEventsData(femaleCount, currentFemale7Option);
       
-      // 로컬스토리지에서 불러오기
-      useEffect(() => {
-        const saved = localStorage.getItem(STORAGE_KEY);
-        if (saved) {
-          try {
-            const parsed = JSON.parse(saved);
-            setAssignments(parsed);
-          } catch (e) {
-            console.error('저장된 데이터 파싱 실패:', e);
-          }
-        }
-        
-        const savedCoaches = localStorage.getItem(COACH_STORAGE_KEY);
-        if (savedCoaches) {
-          try {
-            const parsed = JSON.parse(savedCoaches);
-            setTeamCoaches(parsed.coaches || {});
-            setCoachWod(parsed.wod || {});
-            setFemale7Option(parsed.female7Option || {});
-          } catch (e) {
-            console.error('코치 데이터 파싱 실패:', e);
-          }
-        }
-      }, []);
-      
       // 로컬스토리지에 저장
       useEffect(() => {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(assignments));
@@ -2351,6 +2462,13 @@ AMRAP 3MIN
           female7Option: female7Option
         }));
       }, [teamCoaches, coachWod, female7Option]);
+      
+      // URL 쿼리 파라미터 동기화
+      useEffect(() => {
+        const queryString = buildQueryString(selectedTeam, teamCoaches, coachWod, female7Option, assignments);
+        const newUrl = queryString ? `${window.location.pathname}?${queryString}` : window.location.pathname;
+        window.history.replaceState(null, '', newUrl);
+      }, [selectedTeam, teamCoaches, coachWod, female7Option, assignments]);
       
       const currentTeamAssignments = assignments[selectedTeam] || {};
       
@@ -2445,6 +2563,22 @@ AMRAP 3MIN
               [eventId]: {}
             }
           }));
+        }
+      };
+      
+      const handleCopyUrl = async () => {
+        try {
+          await navigator.clipboard.writeText(window.location.href);
+          alert('URL이 클립보드에 복사되었습니다!\n이 URL을 공유하면 현재 상태를 그대로 볼 수 있습니다.');
+        } catch (err) {
+          // 클립보드 API 실패 시 대체 방법
+          const textArea = document.createElement('textarea');
+          textArea.value = window.location.href;
+          document.body.appendChild(textArea);
+          textArea.select();
+          document.execCommand('copy');
+          document.body.removeChild(textArea);
+          alert('URL이 클립보드에 복사되었습니다!\n이 URL을 공유하면 현재 상태를 그대로 볼 수 있습니다.');
         }
       };
       
@@ -2597,6 +2731,7 @@ AMRAP 3MIN
             onCapture={() => setShowCapture(true)}
             onRulebookCapture={() => setShowRulebookCapture(true)}
             onSnowToggle={() => setSnowEnabled(!snowEnabled)}
+            onCopyUrl={handleCopyUrl}
             snowEnabled={snowEnabled}
             assignments={currentTeamAssignments}
           />
