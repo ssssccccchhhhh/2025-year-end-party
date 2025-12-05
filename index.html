@@ -287,8 +287,11 @@ AMRAP 3MIN
     };
     
     // 이벤트 데이터 - 여성 인원수에 따라 동적 생성
-    const getEventsData = (femaleCount) => {
+    // female7Option: 'both' | 'event3' | 'event4' - 여성 7인 규칙을 어디에 적용할지
+    const getEventsData = (femaleCount, female7Option = 'both') => {
       const isFemale7 = femaleCount >= 7;
+      const applyEvent3 = isFemale7 && (female7Option === 'both' || female7Option === 'event3');
+      const applyEvent4 = isFemale7 && (female7Option === 'both' || female7Option === 'event4');
       
       return [
         {
@@ -322,13 +325,13 @@ AMRAP 3MIN
         {
           id: 3,
           name: 'SKYSCRAPER',
-          description: isFemale7
+          description: applyEvent3
             ? 'AMRAP 3분 × 4세트 | 5 Rope Climb → Max MU / Pull Up'
             : 'AMRAP 3분 × 4세트 | 5 Rope Climb → Max Ring MU / Bar MU / C2B PU / PU',
-          note: isFemale7 
+          note: applyEvent3 
             ? '여성 7인팀: (3)(4) 모두 여성 Pull Up' 
             : '여성 6인팀: (3) 남성 C2B Pull Up, (4) 여성 Pull Up',
-          slots: isFemale7 
+          slots: applyEvent3 
             ? [
                 { id: 'M1', label: 'M1', action: '5 Rope Climb + Max Ring MU', gender: 'male' },
                 { id: 'M2', label: 'M2', action: '5 Rope Climb + Max Bar MU', gender: 'male' },
@@ -346,10 +349,10 @@ AMRAP 3MIN
           id: 4,
           name: 'SUPER TRAIN',
           description: '6 Rounds Relay For Time | 200m Run + 50m Sled Push',
-          note: isFemale7 
+          note: applyEvent4 
             ? '여성 7인팀: 3R 여성 출전 (90lbs)' 
             : '여성 6인팀: 3R 남성 출전 (135lbs)',
-          slots: isFemale7
+          slots: applyEvent4
             ? [
                 { id: '1R', label: 'F1', action: '200m Run + Sled Push 45lb', gender: 'female' },
                 { id: '2R', label: 'F2', action: '200m Run + Sled Push 90lb', gender: 'female' },
@@ -1976,7 +1979,7 @@ AMRAP 3MIN
     };
     
     // 컴포넌트: 캡쳐용 결과 뷰
-    const CaptureView = ({ teamKey, members, assignments, onClose, eventsData, teamCoaches, coachWod }) => {
+    const CaptureView = ({ teamKey, members, assignments, onClose, eventsData, teamCoaches, coachWod, female7Option }) => {
       const captureRef = useRef(null);
       const [processing, setProcessing] = useState(false);
       const [scale, setScale] = useState(0.7);
@@ -1989,6 +1992,16 @@ AMRAP 3MIN
       
       // 여성 인원수 계산 (예지 코치 포함)
       const femaleCount = members.female.length + (coachInfo?.gender === 'female' ? 1 : 0);
+      const currentFemale7Option = female7Option || 'both';
+      
+      // 여성 7인팀 규칙 적용 텍스트
+      const getFemale7Text = () => {
+        if (femaleCount < 7) return '여성 6인팀';
+        if (currentFemale7Option === 'both') return '여성 7인팀 (E3+E4)';
+        if (currentFemale7Option === 'event3') return '여성 7인팀 (E3만)';
+        if (currentFemale7Option === 'event4') return '여성 7인팀 (E4만)';
+        return '여성 7인팀';
+      };
       
       const getAssignmentCount = (name) => {
         let count = 0;
@@ -2097,7 +2110,7 @@ AMRAP 3MIN
                 <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '4px' }}>
                   {coachInfo && ('👑 ' + coachInfo.name + ' 코치 · ')}
                   남 {members.male.length}명 / 여 {members.female.length}명{coachInfo?.gender === 'female' ? '+1' : ''}
-                  {femaleCount >= 7 ? ' (여성 7인팀)' : ' (여성 6인팀)'}
+                  {' ('}{getFemale7Text()}{')'}
                 </p>
               </div>
               
@@ -2280,6 +2293,7 @@ AMRAP 3MIN
       const [assignments, setAssignments] = useState({});
       const [teamCoaches, setTeamCoaches] = useState({});
       const [coachWod, setCoachWod] = useState({});
+      const [female7Option, setFemale7Option] = useState({}); // 팀별 여성7인 규칙 옵션
       const [memberListExpanded, setMemberListExpanded] = useState(false);
       const [animatingSlot, setAnimatingSlot] = useState(null);
       const [showCapture, setShowCapture] = useState(false);
@@ -2297,7 +2311,8 @@ AMRAP 3MIN
       
       // 여성 인원수 계산 (예지 코치가 배정된 경우 +1)
       const femaleCount = members.female.length + (coachInfo?.gender === 'female' ? 1 : 0);
-      const eventsData = getEventsData(femaleCount);
+      const currentFemale7Option = female7Option[selectedTeam] || 'both';
+      const eventsData = getEventsData(femaleCount, currentFemale7Option);
       
       // 로컬스토리지에서 불러오기
       useEffect(() => {
@@ -2317,6 +2332,7 @@ AMRAP 3MIN
             const parsed = JSON.parse(savedCoaches);
             setTeamCoaches(parsed.coaches || {});
             setCoachWod(parsed.wod || {});
+            setFemale7Option(parsed.female7Option || {});
           } catch (e) {
             console.error('코치 데이터 파싱 실패:', e);
           }
@@ -2331,9 +2347,10 @@ AMRAP 3MIN
       useEffect(() => {
         localStorage.setItem(COACH_STORAGE_KEY, JSON.stringify({
           coaches: teamCoaches,
-          wod: coachWod
+          wod: coachWod,
+          female7Option: female7Option
         }));
-      }, [teamCoaches, coachWod]);
+      }, [teamCoaches, coachWod, female7Option]);
       
       const currentTeamAssignments = assignments[selectedTeam] || {};
       
@@ -2464,25 +2481,70 @@ AMRAP 3MIN
               : 'rgba(21, 101, 192, 0.1)',
             borderRadius: '10px',
             border: `1px solid ${femaleCount >= 7 ? 'rgba(194, 24, 91, 0.3)' : 'rgba(21, 101, 192, 0.3)'}`,
-            fontSize: '0.85rem',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px'
+            fontSize: '0.85rem'
           }}>
-            <span style={{ fontSize: '1.1rem' }}>
-              {femaleCount >= 7 ? '👩' : '👨'}
-            </span>
-            <span>
-              <strong>남 {members.male.length}명 / 여 {members.female.length}명</strong>
-              {coachInfo && <span> + {coachInfo.name} 코치({coachInfo.gender === 'female' ? '여' : '남'})</span>}
-              {' → '}
-              <span style={{ 
-                color: femaleCount >= 7 ? '#C2185B' : '#1565C0',
-                fontWeight: '600'
-              }}>
-                {femaleCount >= 7 ? '여성 7인팀 규칙 적용' : '여성 6인팀 규칙 적용'}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span style={{ fontSize: '1.1rem' }}>
+                {femaleCount >= 7 ? '👩' : '👨'}
               </span>
-            </span>
+              <span>
+                <strong>남 {members.male.length}명 / 여 {members.female.length}명</strong>
+                {coachInfo && <span> + {coachInfo.name} 코치({coachInfo.gender === 'female' ? '여' : '남'})</span>}
+                {' → '}
+                <span style={{ 
+                  color: femaleCount >= 7 ? '#C2185B' : '#1565C0',
+                  fontWeight: '600'
+                }}>
+                  {femaleCount >= 7 ? '여성 7인팀 규칙 적용' : '여성 6인팀 규칙 적용'}
+                </span>
+              </span>
+            </div>
+            
+            {/* 여성 7인팀일 때만 옵션 표시 */}
+            {femaleCount >= 7 && (
+              <div style={{ 
+                marginTop: '10px', 
+                paddingTop: '10px', 
+                borderTop: '1px dashed rgba(194, 24, 91, 0.3)',
+                display: 'flex',
+                flexWrap: 'wrap',
+                gap: '8px',
+                alignItems: 'center'
+              }}>
+                <span style={{ fontSize: '0.8rem', color: '#C2185B', fontWeight: '600' }}>
+                  🎯 7인 규칙 적용:
+                </span>
+                {[
+                  { value: 'both', label: 'E3 + E4' },
+                  { value: 'event3', label: 'E3만' },
+                  { value: 'event4', label: 'E4만' }
+                ].map(opt => (
+                  <button
+                    key={opt.value}
+                    onClick={() => setFemale7Option(prev => ({ ...prev, [selectedTeam]: opt.value }))}
+                    style={{
+                      padding: '4px 12px',
+                      border: currentFemale7Option === opt.value 
+                        ? '2px solid #C2185B' 
+                        : '1px solid rgba(194, 24, 91, 0.4)',
+                      borderRadius: '16px',
+                      background: currentFemale7Option === opt.value 
+                        ? '#C2185B' 
+                        : 'white',
+                      color: currentFemale7Option === opt.value 
+                        ? 'white' 
+                        : '#C2185B',
+                      fontSize: '0.75rem',
+                      fontWeight: '600',
+                      cursor: 'pointer',
+                      fontFamily: 'inherit'
+                    }}
+                  >
+                    {opt.label}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
           
           <MemberStatus 
@@ -2552,6 +2614,7 @@ AMRAP 3MIN
               eventsData={eventsData}
               teamCoaches={teamCoaches}
               coachWod={coachWod}
+              female7Option={currentFemale7Option}
             />
           )}
           
